@@ -1,5 +1,6 @@
 ---
-type: session
+
+type: meta
 title: "Backlink Empire - Blog Posts, Karpathy Gist, GitHub Cross-Linking"
 created: 2026-04-10
 updated: 2026-04-10
@@ -10,7 +11,7 @@ tags:
   - github
   - blog
   - rankenstein
-status: complete
+status: stable
 related:
   - "[[Claude Obsidian]]"
   - "[[Claude Canvas]]"

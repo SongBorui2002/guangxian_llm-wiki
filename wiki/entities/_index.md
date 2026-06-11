@@ -38,6 +38,4 @@ All entity pages — people, organizations, products, and tools.
 
 <!-- Add tool and product pages here -->
 
----
 
-## Add new entities here as they are identified during ingests.

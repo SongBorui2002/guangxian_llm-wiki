@@ -1,7 +1,7 @@
 ---
 name: wiki-query
 description: "Answer questions using the Obsidian wiki vault. Reads hot cache first, then index, then relevant pages. Synthesizes answers with citations. Files good answers back as wiki pages. Supports quick, standard, and deep modes. Triggers on: what do you know about, query:, what is, explain, summarize, find in wiki, search the wiki, based on the wiki, wiki query quick, wiki query deep."
-allowed-tools: Read Glob Grep
+allowed-tools: Read Glob Grep Bash
 ---
 
 # wiki-query: Query the Wiki
@@ -22,9 +22,35 @@ Full decision tree: [`wiki/references/transport-fallback.md`](../../wiki/referen
 
 ---
 
-## Retrieval (v1.7+)
+## Retrieval Escalation (v1.7+)
 
-If `wiki-retrieve` is feature-detected — `[ -x scripts/retrieve.py ] && [ -d .vault-meta/chunks ] && [ -f .vault-meta/bm25/index.json ]` — Standard and Deep modes consult it BEFORE the legacy hot→index→drill chain:
+This vault follows **Wiki-first by default**. The default query path is:
+
+1. `wiki/hot.md`
+2. `wiki/index.md`
+3. relevant `_index.md` pages
+4. relevant wiki pages
+
+Do not escalate automatically just because the wiki answer is brief. If the user wants more detail, more evidence, or a return to the source material, treat that as an explicit escalation request. Typical user signals include:
+
+- "这个不够全面"
+- "继续深挖"
+- "回原文找"
+- "给出处"
+- "给完整步骤"
+
+On explicit escalation, first run **raw locate** against normalized raw material, then optionally use `wiki-retrieve` if it is feature-detected — `[ -x scripts/retrieve.py ] && [ -d .vault-meta/chunks ] && [ -f .vault-meta/bm25/index.json ]`.
+
+Raw locate means:
+
+1. Search `.raw/documents/**/_normalized/**` and `.raw/repos/**` with `rg`/`grep`
+2. Prefer the smallest understandable section that contains the hit
+3. If no section structure exists, fall back to roughly 20 lines before and after the hit
+4. Keep each candidate block around ~600-1200 tokens
+5. Send at most 5 candidate blocks into retrieval
+6. If only 1-2 candidate blocks are already clear, read them directly and skip retrieval
+
+If retrieval is needed after raw locate, use:
 
 ```bash
 python3 scripts/retrieve.py "<the user's question verbatim>" --top 5
@@ -32,11 +58,11 @@ python3 scripts/retrieve.py "<the user's question verbatim>" --top 5
 
 Output is JSON with a `candidates` array. Each candidate has `absolute_path` to the source page, a `snippet`, and `bm25_score` + `rerank_score`. Read the cited pages (using the transport selector from §Transport above) and synthesize with chunk-level citation.
 
-If `retrieve.py` exits 10 (feature not provisioned), or any step in the pipeline errors, fall back to the v1.6 legacy read order described in the Standard/Deep workflows below — no user-visible breakage.
+If `retrieve.py` exits 10 (feature not provisioned), or any step in the pipeline errors, stay on the wiki + raw-locate path and report the coverage gap rather than pretending the fallback succeeded.
 
-Quick mode always skips retrieval (hot.md only — keeps the ~1,500 token budget intact).
+Quick mode always skips escalation and retrieval (hot.md only — keeps the ~1,500 token budget intact).
 
-Full spec: [`skills/wiki-retrieve/SKILL.md`](../wiki-retrieve/SKILL.md). Setup: `bash bin/setup-retrieve.sh`. The legacy read-order workflows below remain authoritative when wiki-retrieve is not installed.
+Full spec: [`skills/wiki-retrieve/SKILL.md`](../wiki-retrieve/SKILL.md). Setup: `bash bin/setup-retrieve.sh`. The wiki-first workflows below remain authoritative unless the user explicitly asks to go deeper.
 
 ---
 
@@ -69,10 +95,13 @@ Do not open individual wiki pages in quick mode.
 
 1. **Read** `wiki/hot.md` first. It may already have the answer or directly relevant context.
 2. **Read** `wiki/index.md` to find the most relevant pages (scan for titles and descriptions).
-3. **Read** those pages. Follow wikilinks to depth-2 for key entities. No deeper.
-4. **Synthesize** the answer in chat. Cite sources with wikilinks: `(Source: [[Page Name]])`.
-5. **Offer to file** the answer: "This analysis seems worth keeping. Should I save it as `wiki/questions/answer-name.md`?"
-6. If the question reveals a **gap**: say "I don't have enough on X. Want to find a source?"
+3. **Read** those pages. Follow wikilinks to depth-2 for key entities, concepts, workflows, and domains. No deeper.
+4. **Synthesize** the answer in chat if the wiki is sufficient. Cite sources with wikilinks: `(Source: [[Page Name]])`.
+5. **If the answer is still thin**, say so explicitly, but do not escalate on your own. Offer the user a deeper pass back to the source material.
+6. **Only if the user explicitly asks to go deeper**, run raw locate against normalized raw material with `rg`/`grep`, read the matched sections, and use retrieval only if the candidate set is still broad and `wiki-retrieve` is provisioned.
+7. **If raw locate already narrows the answer to 1-2 clear source sections**, read them directly and answer without calling retrieval.
+8. **Offer to file** the answer. Use `wiki/questions/` for synthesis, `wiki/comparisons/` for side-by-side analysis, and `wiki/workflows/` when the answer is mainly a reusable procedure.
+9. If the question reveals a **gap** after wiki, raw locate, and retrieval fallback: say "I don't have enough on X. Want to ingest or research a source?"
 
 ---
 
@@ -81,11 +110,13 @@ Do not open individual wiki pages in quick mode.
 Use for synthesis questions, comparisons, or "tell me everything about X."
 
 1. Read `wiki/hot.md` and `wiki/index.md`.
-2. Identify all relevant sections (concepts, entities, sources, comparisons).
-3. Read every relevant page. No skipping.
-4. If wiki coverage is thin, offer to supplement with web search.
-5. Synthesize a comprehensive answer with full citations.
-6. Always file the result back as a wiki page. Deep answers are too valuable to lose.
+2. Identify all relevant sections (concepts, entities, workflows, sources, comparisons, domains).
+3. Read every relevant wiki page first. No skipping.
+4. If wiki coverage is still thin, state the limit clearly and offer a deeper source-grounded pass. Do not escalate unless the user explicitly asks for it.
+5. On explicit user escalation, run raw locate first, then use retrieval only if raw locate leaves multiple plausible candidate sections.
+6. If the vault is still thin after that, offer to supplement with web search or additional ingest.
+7. Synthesize a comprehensive answer with full citations.
+8. Suggest filing the result back as a wiki page. Prefer `workflows/` when the result is an end-to-end procedure.
 
 ---
 
@@ -120,6 +151,9 @@ The master index (`wiki/index.md`) looks like:
 
 ## Sources
 - [[Source Title]]: author, date, type
+
+## Workflows
+- [[Workflow Name]]: what task or procedure it covers
 
 ## Questions
 - [[Question Title]]: answer summary
@@ -178,7 +212,7 @@ status: developing
 ---
 ```
 
-Then write the answer as the page body. Include citations. Link every mentioned concept or entity.
+Then write the answer as the page body. Include citations. Link every mentioned concept, entity, workflow, or domain.
 
 After filing, add an entry to `wiki/index.md` under Questions and append to `wiki/log.md`.
 
@@ -190,8 +224,9 @@ If the question cannot be answered from the wiki:
 
 1. Say clearly: "I don't have enough in the wiki to answer this well."
 2. Identify the specific gap: "I have nothing on [subtopic]."
-3. Suggest: "Want to find a source on this? I can help you search or process one."
-4. Do not fabricate. Do not answer from training data if the question is about the specific domain in this wiki.
+3. If the user explicitly wants a deeper answer, run raw locate first and use retrieval only if needed after that.
+4. Suggest: "Want to find or ingest a source on this? I can help process one."
+5. Do not fabricate. Do not answer from training data if the question is about the specific domain in this wiki.
 
 ---
 

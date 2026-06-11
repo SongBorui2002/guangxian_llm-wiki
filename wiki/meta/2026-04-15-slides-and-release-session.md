@@ -1,4 +1,5 @@
 ---
+
 type: meta
 title: "Claude SEO v1.9.0 Slides and GitHub Release Session"
 updated: 2026-04-15
@@ -8,7 +9,7 @@ tags:
   - claude-seo
   - github
   - slides
-status: complete
+status: stable
 related:
   - "[[Claude SEO]]"
   - "[[Pro Hub Challenge]]"

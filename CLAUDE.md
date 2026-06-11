@@ -2,32 +2,68 @@
 
 This folder is both a Claude Code plugin and an Obsidian vault.
 
-**Plugin name:** `claude-obsidian` (v1.7+ "Compound Vault" — see [docs/compound-vault-guide.md](docs/compound-vault-guide.md); v1.8+ adds methodology modes — see [docs/methodology-modes-guide.md](docs/methodology-modes-guide.md))
-**Skills:** `/wiki`, `/wiki-ingest`, `/wiki-query`, `/wiki-lint`, `/wiki-cli` (v1.7), `/wiki-retrieve` (v1.7, opt-in), `/wiki-mode` (v1.8)
+**Plugin name:** `claude-obsidian`  
+**Skills:** `/wiki`, `/wiki-ingest`, `/wiki-query`, `/wiki-lint`, `/wiki-cli`, `/wiki-retrieve`, `/wiki-mode`  
 **Vault path:** This directory (open in Obsidian directly)
 
 ## What This Vault Is For
 
-This vault demonstrates the LLM Wiki pattern — a persistent, compounding knowledge base for Claude + Obsidian. Drop any source, ask any question, and the wiki grows richer with every session.
+This fork is being adapted into an enterprise-internal knowledge base prototype. Its main job is to turn software manuals, platform instructions, process notes, troubleshooting writeups, internal technical documents, screenshots, and repositories into a maintained Obsidian wiki.
+
+The project follows the LLM Wiki pattern:
+
+1. `.raw/` is the immutable source layer
+2. `wiki/` is the maintained synthesis layer
+3. `AGENTS.md` and `CLAUDE.md` are the schema layer
 
 ## Vault Structure
 
-```
-.raw/           source documents — immutable, Claude reads but never modifies
-wiki/           Claude-generated knowledge base
-_templates/     Obsidian Templater templates
+```text
+.raw/
+  documents/     document extracts, local HTML bundle markdown, imported text
+  images/        screenshots, diagrams, scans, OCR notes
+  code-data/     code snippets, configs, structured extracts
+  repos/         git repositories used as source material
+
+wiki/
+  index.md
+  overview.md
+  log.md
+  hot.md
+  sources/
+  entities/
+  concepts/
+  workflows/
+  domains/
+  comparisons/
+  questions/
+  meta/
+  canvases/
+
+_templates/     Obsidian templates for wiki page types
 _attachments/   images and PDFs referenced by wiki pages
 ```
 
+Legacy `.raw/*.md` pages from older versions remain valid inputs, but new ingest work should prefer the typed subfolders under `.raw/`.
+
 ## How to Use
 
-Drop a source file into `.raw/`, then tell Claude: "ingest [filename]".
+Put or normalize source material into `.raw/`, then tell the agent to ingest it.
 
-Ask any question. Claude reads the index first, then drills into relevant pages.
+`wiki-ingest` should treat ingest as a compilation pass, not a summary pass. For large manuals, platform guides, and operational documents, it should actively identify likely future questions, stable workflows, recurring settings, and key concepts, then write wiki pages that reduce future fallback to raw sections.
 
-Run `/wiki` to scaffold a new vault or check setup status.
+The expected query behavior is **Wiki-first by default, with user-driven escalation**:
 
-Run "lint the wiki" every 10-15 ingests to catch orphans and gaps.
+1. Read `wiki/hot.md`
+2. Read `wiki/index.md`
+3. Read relevant `_index.md` pages and target wiki pages
+4. If the answer is still thin, say so and offer a deeper source-grounded pass
+5. Only when the user explicitly asks to go deeper, run raw locate against normalized raw material
+6. Use retrieval after raw locate only if multiple candidate sections still need reranking
+
+Run `/wiki` to scaffold or repair vault structure.
+
+Run `lint the wiki` every 10-15 ingests to catch orphans, stale claims, missing workflow pages, and weak cross-links.
 
 ## Cross-Project Access
 
@@ -42,6 +78,8 @@ When you need context not already in this project:
 2. If not enough, read wiki/index.md
 3. If you need domain specifics, read wiki/<domain>/_index.md
 4. Only then read individual wiki pages
+5. If the user explicitly asks for more detail or original evidence, search normalized raw material first
+6. Use retrieval from raw sources only after raw locate if the candidate set is still broad
 
 Do NOT read the wiki for general coding questions or things already in this project.
 ```
@@ -62,6 +100,16 @@ Do NOT read the wiki for general coding questions or things already in this proj
 | `/wiki-mode` (v1.8) | Methodology modes (LYT / PARA / Zettelkasten / Generic). Set via `bash bin/setup-mode.sh`; consumed by wiki-ingest / save / autoresearch for routing new pages |
 | `/think` (v1.9) | The 10-principle thinking loop (OBSERVE-OBSERVE-LISTEN-THINK-CONNECT-CONNECT-FEEL-ACCEPT-CREATE-GROW) as an invocable workflow. Apply to architectural decisions, audits, post-mortems, ambiguous user requests. Every other skill has a "How to think" appendix mapping this framework to its specific work |
 
+## Page Types
+
+- `wiki/sources/`: source summary pages with provenance
+- `wiki/entities/`: named systems, teams, orgs, products, repos, services
+- `wiki/concepts/`: concepts, principles, standards, abstractions
+- `wiki/workflows/`: procedural knowledge, runbooks, operating steps, packaging flows, troubleshooting flows
+- `wiki/domains/`: top-level navigation pages, aligned to business or platform areas
+- `wiki/questions/`: durable query outputs
+- `wiki/comparisons/`: side-by-side analyses
+
 ## Transport (v1.7+)
 
 `scripts/detect-transport.sh` writes `.vault-meta/transport.json` on first run and refreshes weekly. Skills consult it before mutating the vault. Fallback chain: Obsidian CLI → mcp-obsidian → mcpvault → filesystem (always-available floor). Decision tree: [wiki/references/transport-fallback.md](wiki/references/transport-fallback.md).
@@ -72,7 +120,21 @@ Do NOT read the wiki for general coding questions or things already in this proj
 
 ## Methodology Modes (v1.8+)
 
-Pick an organizational style for the vault via `bash bin/setup-mode.sh`. Four modes available: **generic** (v1.7 default — no opinion), **LYT** (Linking Your Thinking — MOCs + atomic notes), **PARA** (Projects/Areas/Resources/Archives), **Zettelkasten** (timestamped IDs, flat, dense linking). The mode is written to `.vault-meta/mode.json` (gitignored by default; `git add -f` to commit). `wiki-ingest`, `save`, and `autoresearch` consult `python3 scripts/wiki-mode.py route <type> "<name>"` before filing new pages — no special-casing needed in the consumer skills. Full guide: [docs/methodology-modes-guide.md](docs/methodology-modes-guide.md). Closes priority gap 5 from the May 2026 compass artifact.
+Pick an organizational style for the vault via `bash bin/setup-mode.sh`. Four modes available: **generic** (default), **LYT**, **PARA**, **Zettelkasten**. The mode is written to `.vault-meta/mode.json` (gitignored by default; `git add -f` to commit). `wiki-ingest`, `save`, and `autoresearch` consult `python3 scripts/wiki-mode.py route <type> "<name>"` before filing new pages.
+
+For this enterprise MVP, `generic` remains the primary target mode because it preserves the explicit `sources/entities/concepts/workflows/domains` layout we want to validate.
+
+## Enterprise Rules
+
+- Prefer `.raw/documents/`, `.raw/images/`, `.raw/code-data/`, and `.raw/repos/` for new source intake.
+- Treat repositories as raw sources, not just URLs. Shallow clones are acceptable.
+- Large manuals should not stop at overview pages. Ingest should proactively extract workflows, settings, field meanings, constraints, and likely user questions.
+- When a source was split into section pages, important workflow and concept pages should point to those sections directly.
+- Do not collapse procedural knowledge into `concepts/` when the page primarily answers "how do I do this?" That belongs in `workflows/`.
+- If common questions still require broad raw searching after ingest, the ingest is not finished.
+- Good answers should usually be written back into the wiki as `questions/`, `comparisons/`, or `workflows/` depending on their shape.
+- Retrieval is a supplement, not the primary knowledge surface.
+- Query-time escalation should prefer raw locate first, then retrieval only if raw locate still leaves too many plausible sections.
 
 ## Pre-commit verifier (v1.7.1+)
 

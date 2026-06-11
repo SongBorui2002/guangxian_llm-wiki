@@ -1,7 +1,7 @@
 ---
 type: meta
 title: "Hot Cache"
-updated: 2026-05-17T04:30:00
+updated: 2026-06-08T10:00:00
 tags:
   - meta
   - hot-cache
@@ -20,73 +20,50 @@ Navigation: [[index]] | [[log]] | [[overview]]
 
 ## Last Updated
 
-2026-05-17 (very late, post-polish): **v1.7.1 patch + polish slice shipped locally** (branch `v1.7.0-compound-vault`, still NOT pushed). All 1 BLOCKER + 6 HIGH findings closed; then verifier agent re-pass surfaced 2 MEDIUM + 3 LOW polish items, all closed in `c2d7575`. Final verifier verdict: 0/0/0/0 SHIP. Score: 100/100 on the v1.7.1 patch dimensions (plan fidelity, behavioral correctness, test health, internal consistency, constraint honor, defect introduction, kernel application). 8 commits landed in this resumption session: `ca68bb6` (Fix 1+6 BLOCKER B1 + H6 — contextual-prefix `--allow-egress` flag default-off + `bin/setup-retrieve.sh` consent prompt + `skills/wiki-retrieve/SKILL.md` Data Privacy callout, mirror of `tiling-check.py:351` `--allow-remote-ollama` precedent), `4837d4f` (Fix 2 H1 — setup-retrieve exit 5 + 3-option recovery hint on Stage 1 failure), `7e1f187` (Fix 3 H2 — `make clean-test-state` extended to v1.7 artifacts), `7120970` (Fix 4 H3 — PostToolUse hook captures LOCK_RC directly, not via pipeline; defers commit on script error OR locks held), `722ac97` (Fix 5 H5 — `detect-transport.sh` `json_escape()` helper via `python3 json.dumps`), `3ea443f` (Fix 7 H4 — new `agents/verifier.md` read-only pre-commit specialist + CLAUDE.md reference), and the cross-cutting closeout `822c80a` (version bump 1.7.0 → 1.7.1, CHANGELOG entry, audit doc updated with §10.2 SHAs + v1.7.1 closeout block, audit benchmark scripts promoted to tracked files). `make test` ran 7/7 green after every fix. End-to-end verifications: `python3 scripts/contextual-prefix.py --peek` returns `tier=synthetic` even with `ANTHROPIC_API_KEY` set (default-deny works); `--allow-egress` correctly flips it; `echo "" | bash bin/setup-retrieve.sh` aborts at the consent prompt; `bash scripts/wiki-lock.sh acquire ...` then hook trigger correctly defers auto-commit. **Next step**: ask user whether to push + tag `v1.7.1`. Do NOT push without explicit go.
+2026-06-08: **DaVinci YRGB CST 手动色彩管理工作流已创建.** YRGB（非 RCM）模式下使用 CST 节点手动搭建完整色彩管理管线的工作流页面。覆盖 Input/Output CST 配置、Tone Mapping/Gamut Mapping 选项对比、Shared Node 管理策略。从 query "达芬奇色彩管理" 深化而来。
 
-2026-05-17 (late): **v1.7.0 full audit complete; v1.7.1 fixes plan ready**. Branch `v1.7.0-compound-vault` still local-only (no push, no tag). The audit was demanded as "THROUGH and FULL on AUDIT following /best-practices" with EVERYTHING scope. Result: **31 findings (1 BLOCKER + 6 HIGH + 14 MEDIUM + 10 LOW)** in `docs/audits/v1.7.0-audit-2026-05-17.md` (481 lines). **BLOCKER**: `scripts/contextual-prefix.py:252-258` data-egress consent gap — `pick_prefix_tier()` silently sends wiki page bodies to Anthropic API whenever `ANTHROPIC_API_KEY` is set; mirror `scripts/tiling-check.py:351-352` `--allow-remote-ollama` precedent to fix (~1h). **Retrieval benchmark PASS**: 50 queries × 2 pipelines via `scripts/benchmark-runner.py`; v1.7 top-1 54.0% vs v1.6 baseline 24.0% (+30pp); error-reduction +39.5% vs ≥30% gate. Per-category breakdown in audit §6.2. **Competitor recheck (24h after compass May 16)**: kepano +1.1k★ to 31.6k, Copilot CLI integration issue still stale 3mo (genuine moat for us), NotebookLM May 2026 shipped Video Overviews + 4-tile Studio (widens derivative-outputs gap — filed M13 for v2.0 derive spec). **7-axis #1 verdict**: YES on 4 axes (compounding wiki, multi-writer safety, retrieval architecture free-tier, license openness), TIE on methodology (v1.8 closes), NO on GUI ergonomics (v2.5+) + derivative outputs (v2.0). Honest answer: #1 today on power-user-control axes, not in mainstream adoption without v2.0+v2.5.
+2026-06-05: **Advanced Color Science Course 2026 教学材料导入完成.** 来自智能成像工程学院的高阶色彩科学课程，涵盖同色异谱失效、观察者差异、CIE 标准。1 个源页面、2 个概念页面。交叉链接到 DaVinci 色彩管理与 ACES 工作流。
 
-**For post-compact resumption**: read `docs/audits/v1.7.1-fixes-plan.md` (this is your roadmap — 6 commits, ~2.5h, sequenced top-to-bottom with file paths + exact edits + verification steps + commit messages per fix). The plan starts with the BLOCKER (Fix 1) + Data Privacy callout (Fix 6) bundled. Working tree state on resume: 4 untracked files (audit doc, fixes plan, `scripts/baseline-v16.py`, `scripts/benchmark-runner.py`); `96a5505` wiki auto-commit landed the benchmark corpus at `wiki/meta/retrieval-benchmark-v1.7.md`; `make test` is 7/7 green; `bash bin/setup-retrieve.sh --no-llm` is provisioned (chunks/, bm25/, embed-cache.json exist — gitignored). User wants to "proceed" with the fixes after compact; do NOT push or tag without explicit go.
+2026-06-05: **YYHG_gallery 导入完成.** DaVinci Resolve PowerGrade DRX 自动化插件（Lua 脚本 + Electron）| 1 个源页面、2 个概念、1 个工作流。覆盖 PowerGrade 相册对象层级、DRX 导出/应用 API 和自动化工作流。
 
-**Session record** (full prose, ~600 lines) in personal vault: `~/Documents/Obsidian Vault/sessions/2026-05-17 claude-obsidian v1.7 audit + fixes plan.md`. Ingest-log entry prepended at top of `~/Documents/Obsidian Vault/log/ingest-log.md` per global save convention.
+2026-06-05: **3 个 Git 仓库批量导入完成.** 立体字幕和时间码工具链：StereoscopicSubtitlePlugin（Electron 插件）、3dResolveSubtitle（Python 脚本扩展）、dftt_timecode（Python 时间码库 v1.0.0） | 3 个源页面、1 个实体、3 个概念、1 个工作流。覆盖了立体 3D 字幕 DCDM 格式、SMPTE ST 428-7 标准和 HFR 时间码多格式转换。
 
-2026-05-17: **v1.7.0 "Compound Vault" refoundation shipped locally** (branch `v1.7.0-compound-vault`, NOT pushed). Four workstreams committed as 4 separate feat commits: §3.1 substrate hard-prefer on `kepano/obsidian-skills` (9c8e510), §3.2 default transport with new `wiki-cli` skill + `scripts/detect-transport.sh` (6c7671e), §3.3 hybrid retrieval pipeline as opt-in `wiki-retrieve` skill with 4 new scripts + 2 hermetic test suites (45a5bd3), §3.4 multi-writer safety closing the latent corruption bug from v1.6 via `scripts/wiki-lock.sh` (66c11f9). Cross-cutting commit pending: version bump 1.6.0→1.7.0, README/CLAUDE.md updates, CHANGELOG entry, new `docs/compound-vault-guide.md` omnibus, this hot.md update. `make test` runs 7 suites green (was 3) — zero ollama / network dependency preserved. Plan file at `~/.claude/plans/read-in-full-the-hidden-sun.md`. User-paused at "full on review on all work done"; no push or tag until explicit go.
+2026-06-05: **DaVinci Resolve 20.2 参考手册 ingestion complete.** Blackmagic Design DaVinci Resolve 20 官方参考手册（199MB PDF，100+ 章）已从 PDF 规范化并导入 wiki。创建了 1 个源页面、2 个实体页面、1 个领域页面、6 个概念页面、5 个工作流页面。覆盖编辑、调色、Fusion 合成、Fairlight 音频、色彩管理/ACES、HDR/Dolby Vision 和渲染交付。
 
-2026-04-24 (late night): v1.6.0 public release notes shipped. `docs/releases/v1.6.0.md` (Karpathy-style, 346 lines) establishes the release-notes convention. Three original SVGs at `wiki/meta/dragonscale-{mechanism-overview,6-test-flow,frontier-graph}.svg` carry the visual load; Wikipedia dragon curve referenced by text link only (no binary vendoring). R4 codex verifier ACCEPT WITH FIXES, 3 wording fixes applied. User runs `gh release create v1.6.0 --notes-file docs/releases/v1.6.0.md` when ready. Commits `85515bb` (docs), plus wiki/meta/ auto-commits for SVGs.
+2026-06-05: **DCP 打包 SDR 色彩空间转换 问答存档.** 将 Rec.709 Gamma 2.4 → DCP 的 CSC 节点配置、XYZRGB Conversion 位置和 On/Off 判断逻辑整理为结构化问答页面。
 
-2026-04-24 (night): DragonScale end-to-end validation pass. Six-test menu run via Teams orchestration (codex gpt-5.4 for M1 dry-run, M1 commit, M4 autoresearch; chair for ollama pull, M2 allocate, M3 full tiling). All six green. First real fold committed (`wiki/folds/fold-k3-from-2026-04-23-to-2026-04-24-n8.md`, 115 lines, 8 children). First real tiling report at `wiki/meta/tiling-report-2026-04-24.md` (0 errors, 15 review pairs). M2 counter advanced 2 to 3, `c-000002` reserved-unassigned. M4 autoresearch filed 3 new concept pages (`Persistent Wiki Artifact`, `Source-First Synthesis`, `Query-Time Retrieval`) extending `[[How does the LLM Wiki pattern work?]]` with Karpathy gist + RAG + MemGPT + Obsidian docs as sources. v1.6.0 validated.
+2026-06-05: **Transkoder 2025 用户指南 ingestion complete.** COLORFRONT Transkoder 2025 官方用户手册（177k 字，27 章 + 14 附录）已从 HTML bundle 规范化并导入 wiki。HTML 源 -> `python3 scripts/normalize-html-bundle.py` 生成 42 个章节分页 + 主页面。创建了 1 个源页面、2 个实体页面（COLORFRONT、Transkoder 2025）、1 个领域页面（domains/transkoder/）、8 个概念页面、6 个工作流页面。涵盖了 DCP/IMF 母版制作、Node Page 图像处理管线、JPEG2000 编解码、HDR/Dolby Vision、渲染流程、调色流程、安装指南、远程流媒体、键盘快捷键和故障排查等核心主题。
 
-2026-04-24 (evening): v1.6.0 closeout via Teams approach (chair-led, codex gpt-5.4 for sub-agents). 2 explorers (closeout gaps + doc surface). 6 bounded writes (non-overlapping scope): `docs/dragonscale-guide.md` (new, 563 lines), `wiki/meta/2026-04-24-v1.6.0-release-session.md` (new, 346 lines), `wiki/meta/boundary-frontier-2026-04-24.md` (first real M4 run artifact, new), `docs/install-guide.md` (1.5.0 to 1.6.0 + M4 callout + flat-extractive correction), `README.md` (parenthetical + guide link), `wiki/hot.md` (drift fixes). 1 adversarial verifier returned ACCEPT WITH FIXES; all 11 fixes applied in place. Docs commit `eb1562f`. `make test` green (74+ assertions). Still no git tags for v1.5.0 / v1.5.1 / v1.6.0. User requested gpt-5.5; API rejects it on this codex CLI; gpt-5.4 used throughout.
+## Key Recent Facts
 
-2026-04-24 (late): Phase 4 shipped. Mechanism 4 (boundary-first autoresearch) implemented as `scripts/boundary-score.py` with expanded test coverage. `/autoresearch` without a topic now offers frontier candidates (opt-in, agenda-control labeled). Cross-file status updated. Version bumped to 1.6.0 in `plugin.json` + `marketplace.json`; no git tag created locally (only pre-DragonScale tags `v1.1` - `v1.4.3` exist).
+- 新增概念页面：[[Color Metamerism]] 与 [[CIE Color Matching Functions]] — 色彩科学基础，与 ACES/DaVinci 色彩管理交叉链接
+- 新增源页面：[[Advanced Color Science Course 2026]] — 教学材料涵盖观察者差异与同色异谱失效
+- 新增问答页面：[[DCP 打包 SDR 色彩空间转换]] — 覆盖 Rec.709 SDR → DCP 色彩管线完整配置
+- Transkoder 2025 Wiki 知识库现包含 17 个专用页面，覆盖 DCP/IMF 母版制作全流程
+- DragonScale Mechanism 4 shipped in Phase 4 as an opt-in Topic Selection mode in `skills/autoresearch/`
+- v1.6.0 not yet pushed to GitHub (local commits only). User controls push and tag timing.
 
-2026-04-24 (afternoon): Phase 3.6 hardening, five surgical fixes (tiling --report path confinement, rollout baseline, AGENTS.md consistency, wiki-ingest .raw contradiction, install-guide version). v1.5.1.
+## Recent Changes
 
-2026-04-24 (morning): Phase 3.5 hardening pass. Cross-phase audit resolved 10 hold-ship items. At that point Mechanism 4 was marked NOT IMPLEMENTED (later reversed in Phase 4 the same day). `bin/setup-dragonscale.sh` + tests + Makefile added, CHANGELOG created, versions synced to 1.5.0.
-
-2026-04-23 (3): Phase 3 complete. Semantic tiling lint shipped as opt-in. `scripts/tiling-check.py` with flock-guarded atomic cache, localhost-locked OLLAMA_URL default, symlink rejection, model-drift invalidation, and banded thresholds (error>=0.90, review>=0.80, conservative seeds). 4 codex review rounds, 10/10 accept.
-
-2026-04-23 (2): Phase 2 complete. Deterministic page addresses MVP via `scripts/allocate-address.sh` (flock-guarded, recovers counter from max observed). New frontmatter `address: c-NNNNNN`. `wiki-ingest` and `wiki-lint` updated with opt-in Address Assignment and Validation sections. 3 codex rounds, 8/8 accept.
-
-2026-04-23 (1): Phase 0-1 complete. DragonScale Memory spec (`wiki/concepts/DragonScale Memory.md` v0.3) plus `skills/wiki-fold/` for Mechanism 1 (log rollups, dry-run verified). Survived multi-round codex review.
-
-## Plugin State
-
-- **Version**: 1.7.1 (audit-driven patch on top of Compound Vault; plugin.json + marketplace.json synced; local-only branch `v1.7.0-compound-vault`, no push, no tag)
-- **Install ID**: `claude-obsidian@ai-marketing-hub-claude-obsidian`
-- **Skills**: 13 (wiki, wiki-ingest, wiki-query, wiki-lint, wiki-fold, save, autoresearch, canvas, defuddle, obsidian-bases, obsidian-markdown, **wiki-cli (v1.7)**, **wiki-retrieve (v1.7, opt-in)**)
-- **Scripts (v1.6)**: `scripts/allocate-address.sh`, `scripts/tiling-check.py`, `scripts/boundary-score.py` (DragonScale; opt-in; feature-detected by skills)
-- **Scripts (v1.7 — new)**: `scripts/detect-transport.sh`, `scripts/contextual-prefix.py`, `scripts/bm25-index.py`, `scripts/rerank.py`, `scripts/retrieve.py`, `scripts/wiki-lock.sh`
-- **Setup**: `bin/setup-vault.sh` (base vault), `bin/setup-dragonscale.sh` (opt-in DragonScale), `bin/setup-multi-agent.sh` (multi-agent bootstrap), `bin/setup-retrieve.sh` (opt-in v1.7 hybrid retrieval)
-- **Tests**: `make test` runs 7 suites — `test_allocate_address.sh`, `test_tiling_check.py`, `test_boundary_score.py`, **`test_bm25_index.py`**, **`test_retrieve.py`**, **`test_wiki_lock.sh`**, **`test_concurrent_write.sh`**. Zero ollama and zero network dependency for all core tests.
-- **Hooks**: 4 (SessionStart, PostCompact, PostToolUse [stages wiki/, .raw/, .vault-meta/; **v1.7: defers `git add` if wiki-lock locks held**], Stop)
-
-## DragonScale Mechanisms
-
-1. **Fold operator** (Mechanism 1): `skills/wiki-fold/`, dry-run verified AND first real fold committed at `wiki/folds/fold-k3-from-2026-04-23-to-2026-04-24-n8.md`.
-2. **Deterministic addresses** (Mechanism 2): shipped and exercised; vault counter at 3. `c-000001` on DragonScale Memory.md. `c-000002` reserved-unassigned from validation pass (gap acceptable per spec).
-3. **Semantic tiling lint** (Mechanism 3): shipped and activated. `nomic-embed-text` pulled; first tiling report at `wiki/meta/tiling-report-2026-04-24.md` (0 errors, 15 review-band pairs).
-4. **Boundary-first autoresearch** (Mechanism 4): shipped (Phase 4, opt-in). `scripts/boundary-score.py` + `tests/test_boundary_score.py`. `/autoresearch` without a topic surfaces top-5 frontier pages as candidates; user picks, overrides, or declines. Explicitly labeled "agenda control" in both spec and skill.
-
-## Key Lessons from This Release Cycle
-
-1. Cross-phase audits are essential. Individual phase reviews miss drift between phases.
-2. Opt-in feature detection (`[ -x script ] && [ -f state ]`) preserves default plugin behavior for adopters and non-adopters alike.
-3. PostToolUse hook matcher is `Write|Edit`, so Bash writes don't fire it. Scripts that mutate tracked state must be Bash-only to avoid side-effect commits.
-4. Seed-vault self-consistency matters: if the spec says post-rollout pages need addresses, the concept page itself has to have one.
-5. Codex adversarial review rounds stop when the punch list is empty, not when the author feels done.
-
-## Style Preferences
-
-- No em dashes (U+2014) or `--` as punctuation. Periods, commas, colons, or parentheses. Hyphens in compound words are fine.
-- Short and direct responses. No trailing summaries.
-- Parallel tool calls when independent.
+- Added workflows: [[DaVinci YRGB CST 手动色彩管理]] — YRGB + CST 手动色彩管理管线
+- Added source: [[Advanced Color Science Course 2026]] (teaching material)
+- Added concepts: [[Color Metamerism]], [[CIE Color Matching Functions]]
+- Added image attachment: `_attachments/images/color-metamerism-failure.jpeg` (246KB)
+- Added sources: [[3dResolveSubtitle]], [[StereoscopicSubtitlePlugin]], [[dftt_timecode]]
+- Added entities: [[Alaric Hamacher]]
+- Added concepts: [[立体 3D 字幕]], [[DCDM 字幕]], [[DFTT 时间码库]]
+- Added workflows: [[立体 3D 字幕工作流]]
+- Updated: [[domains/davinci-resolve/_index]] (plugin/tools section)
+- Added: [[DaVinci Resolve 20.2 参考手册]], [[Blackmagic Design]], [[DaVinci Resolve 20]], [[domains/davinci-resolve/_index]]
+- Added concepts: [[DaVinci 色彩管理]], [[DaVinci 节点调色]], [[DaVinci Fusion 合成]], [[DaVinci HDR 工作流]], [[DaVinci 色彩空间与 ACES]], [[DaVinci Fairlight 音频]]
+- Added workflows: [[DaVinci 调色流程]], [[DaVinci 渲染与交付]], [[DaVinci 媒体导入与整理]], [[DaVinci 项目管理]], [[DaVinci 专业编辑（Edit Page）]]
+- Added: [[Transkoder 2025 用户指南]], [[COLORFRONT]], [[Transkoder 2025]], [[domains/transkoder/_index]]
+- Added concepts: [[DCP 母版制作]], [[IMF 母版制作]], [[Node Page 图像处理管线]], [[JPEG2000 编解码]], [[HDR 工作流]], [[CPL（Composition Playlist）]], [[KDM（Key Delivery Message）]], [[OV vs VF Package]]
+- Added workflows: [[Transkoder 安装指南]], [[Transkoder 渲染流程]], [[Transkoder 调色流程]], [[DCP 包创建流程]], [[IMF 包创建流程]], [[远程流媒体配置]], [[Transkoder 故障排查]], [[Transkoder 键盘快捷键]]
+- Updated: [[index]], [[log]]
+- Normalized source: `.raw/documents/TKD/TKDUserGuide_dark_normalized/`
 
 ## Active Threads
 
-- DragonScale Mechanism 4 shipped in Phase 4 as an opt-in Topic Selection mode in `skills/autoresearch/`. All four DragonScale mechanisms are now shipped and feature-gated.
-- v1.6.0 not yet pushed to GitHub (local commits only, no git tag created). User controls push and tag timing.
-- CLAUDE.md has one pre-existing uncommitted change ("Release Blog Post" section) that predates this session.
-
-## Repo Locations
-
-- Working: `~/Desktop/claude-obsidian/`
-- Public: https://github.com/AI-Marketing-Hub/claude-obsidian
+- 如需更深层的 Transkoder 知识提取，可进一步为 Audio、Metadata、Subtitles、QC Tools、Security Hardening 等章节创建独立页面
+- 当前以 DCP/IMF/渲染/调色为优先级最高的编译维度，覆盖最常见的工作流查询

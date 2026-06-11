@@ -39,4 +39,8 @@ All source pages — summaries of ingested documents, transcripts, articles, and
 
 ---
 
-## Add new sources here after each ingest.
+## Teaching Material
+
+- [[Advanced Color Science Course 2026]] — Advanced Color Science for Images course from School of Intelligent Imaging Engineering, covering color metamerism failure, observer differences, CIE standards (status: seed)
+
+

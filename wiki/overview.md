@@ -1,5 +1,6 @@
 ---
-type: overview
+
+type: meta
 title: "Wiki Overview"
 created: 2026-04-07
 updated: 2026-04-07

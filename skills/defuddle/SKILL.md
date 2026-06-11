@@ -34,14 +34,14 @@ Outputs clean markdown to stdout.
 
 ### Save to .raw/
 ```bash
-defuddle https://example.com/article > .raw/articles/article-slug-$(date +%Y-%m-%d).md
+defuddle https://example.com/article > .raw/documents/article-slug-$(date +%Y-%m-%d).md
 ```
 
 ### Add frontmatter header after saving
 After running defuddle, prepend the source URL and fetch date:
 ```bash
 SLUG="article-slug-$(date +%Y-%m-%d)"
-{ echo "---"; echo "source_url: https://example.com/article"; echo "fetched: $(date +%Y-%m-%d)"; echo "---"; echo ""; defuddle https://example.com/article; } > .raw/articles/$SLUG.md
+{ echo "---"; echo "source_url: https://example.com/article"; echo "fetched: $(date +%Y-%m-%d)"; echo "---"; echo ""; defuddle https://example.com/article; } > .raw/documents/$SLUG.md
 ```
 
 ### Clean a local HTML file
@@ -83,7 +83,7 @@ The `/wiki-ingest` skill checks for defuddle automatically when a URL is passed.
 
 To manually clean a page and save before ingesting:
 1. Run the save command above
-2. Then: `ingest .raw/articles/[slug].md`
+2. Then: `ingest .raw/documents/[slug].md`
 
 ---
 
@@ -101,5 +101,5 @@ When working on this skill, apply the 10-principle loop. See [`skills/think/SKIL
 | 6 | CONNECT (sys) | Shells out to defuddle-cli (kepano); output lands in `.raw/` for wiki-ingest pickup. |
 | 7 | FEEL | Clean markdown that reads like the original, not boilerplate residue. |
 | 8 | ACCEPT | Some pages don't extract well. Flag and move on; don't force when the heuristic loses. |
-| 9 | CREATE | Markdown to stdout, redirected to `.raw/articles/<slug>-<date>.md`. |
+| 9 | CREATE | Markdown to stdout, redirected to `.raw/documents/<slug>-<date>.md`. |
 | 10 | GROW | Extraction failures suggest defuddle-cli upgrade or alternative extractor — track them as backlog. |

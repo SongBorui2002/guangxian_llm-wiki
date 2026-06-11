@@ -73,7 +73,7 @@ fi
 if [ -z "$REQUESTED_MODE" ]; then
   say ""
   say "Pick a methodology mode for this vault:"
-  say "  1) generic       — v1.7 default; wiki/sources/, entities/, concepts/"
+  say "  1) generic       — explicit wiki folders; wiki/sources/, entities/, concepts/, workflows/"
   say "  2) lyt           — Linking Your Thinking (MOCs + atomic notes flat under wiki/notes/)"
   say "  3) para          — Projects / Areas / Resources / Archives"
   say "  4) zettelkasten  — timestamped IDs, flat under wiki/, dense linking"
@@ -116,16 +116,16 @@ if ! $NO_SEED; then
         para)
           mkdir -p "$VAULT/wiki/projects/inbox" "$VAULT/wiki/areas" \
                    "$VAULT/wiki/resources/incoming" "$VAULT/wiki/resources/people" \
-                   "$VAULT/wiki/resources/concepts" "$VAULT/wiki/archives"
-          say "✓ Created PARA folder structure: projects/{inbox}/, areas/, resources/{incoming,people,concepts}/, archives/"
+                   "$VAULT/wiki/resources/concepts" "$VAULT/wiki/resources/workflows" "$VAULT/wiki/archives"
+          say "✓ Created PARA folder structure: projects/{inbox}/, areas/, resources/{incoming,people,concepts,workflows}/, archives/"
           ;;
         zettelkasten)
           say "✓ Zettelkasten uses no subfolders; all notes file flat under wiki/"
           ;;
         generic)
           mkdir -p "$VAULT/wiki/sources" "$VAULT/wiki/entities" \
-                   "$VAULT/wiki/concepts" "$VAULT/wiki/sessions"
-          say "✓ Created generic folders: sources/, entities/, concepts/, sessions/"
+                   "$VAULT/wiki/concepts" "$VAULT/wiki/workflows" "$VAULT/wiki/sessions"
+          say "✓ Created generic folders: sources/, entities/, concepts/, workflows/, sessions/"
           ;;
       esac
       ;;

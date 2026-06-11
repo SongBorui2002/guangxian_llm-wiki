@@ -1,5 +1,6 @@
 ---
-type: session
+
+type: meta
 title: "claude-obsidian v1.4 Release Session"
 created: 2026-04-08
 updated: 2026-04-08
@@ -43,7 +44,7 @@ Shipped in response to an internal quality check against the wider ecosystem (16
 
 ### wiki-ingest upgrades
 
-- **URL ingestion**: passes any `https://` URL directly. Uses WebFetch, optionally pipes through defuddle, saves to `.raw/articles/`, then runs the normal ingest pipeline.
+- **URL ingestion**: passes any `https://` URL directly. Uses WebFetch, optionally pipes through defuddle, saves to `.raw/documents/`, then runs the normal ingest pipeline.
 - **Image/vision ingestion**: `.png`, `.jpg`, `.gif`, `.webp`, etc. Claude reads the image natively, extracts text via OCR and concepts via vision, saves the description to `.raw/images/`, then ingests.
 - **Delta tracking**: `.raw/.manifest.json` tracks MD5 hash per source, timestamps, and the pages produced. Re-running ingest on unchanged files skips them automatically. Override with "force ingest".
 

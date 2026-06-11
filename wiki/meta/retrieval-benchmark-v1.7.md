@@ -1,8 +1,11 @@
 ---
+
 type: meta
 title: "v1.7 Retrieval Benchmark Corpus"
 status: evergreen
 updated: 2026-05-17
+tags:
+  - meta
 ---
 
 # v1.7 Retrieval Benchmark — 50 Queries

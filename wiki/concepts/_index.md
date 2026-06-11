@@ -40,4 +40,9 @@ All concept pages — ideas, patterns, and frameworks extracted from sources.
 
 ---
 
-## Add new concepts here as they are extracted from sources.
+## Color Science
+
+- [[Color Metamerism]] — Spectral metamers and observer differences in color matching; physiological and instrumental CMF variation (status: seed)
+- [[CIE Color Matching Functions]] — CIE 1931 vs 1964 standard observers; color measurement functions; ACES foundation (status: seed)
+
+

@@ -68,11 +68,12 @@ Determine the best type from the conversation content:
 |------|--------|---------|
 | synthesis | wiki/questions/ | Multi-step analysis, comparison, or answer to a specific question |
 | concept | wiki/concepts/ | Explaining or defining an idea, pattern, or framework |
+| workflow | wiki/workflows/ | Reusable procedure, runbook, troubleshooting flow, or step-by-step task |
 | source | wiki/sources/ | Summary of external material discussed in the session |
 | decision | wiki/meta/ | Architectural, project, or strategic decision that was made |
 | session | wiki/meta/ | Full session summary: captures everything discussed |
 
-If the user specifies a type, use that. If not, pick the best fit based on the content. When in doubt, use `synthesis`.
+If the user specifies a type, use that. If not, pick the best fit based on the content. If the note mainly answers "how do I do this?", use `workflow`. Otherwise, when in doubt, use `synthesis`.
 
 ---
 
@@ -111,7 +112,7 @@ The mode router (`python3 scripts/wiki-mode.py route session "<topic>"`) applies
 
 ```yaml
 ---
-type: <synthesis|concept|source|decision|session>
+type: <question|concept|workflow|source|decision|session>
 title: "Note Title"
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -121,7 +122,7 @@ status: developing
 related:
   - "[[Any Wiki Page Mentioned]]"
 sources:
-  - "[[.raw/source-if-applicable.md]]"
+  - "[[.raw/documents/source-if-applicable.md]]"
 ---
 ```
 
@@ -145,7 +146,7 @@ status: active
 - Not: "The user asked about X and Claude explained..."
 - Yes: "X works by doing Y. The key insight is Z."
 - Include all relevant context. Future sessions should be able to read this page cold.
-- Link every mentioned concept, entity, or wiki page with wikilinks.
+- Link every mentioned concept, entity, workflow, or wiki page with wikilinks.
 - Cite sources where applicable: `(Source: [[Page]])`.
 
 ---

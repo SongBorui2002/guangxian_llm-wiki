@@ -110,33 +110,98 @@ def test_cosine_zero_vector():
 def test_rerank_noop_when_ollama_unreachable():
     """When ollama is not reachable, rerank should pass candidates through with
     rerank_source='noop-no-ollama'. We force this by patching ollama_alive."""
-    with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(False, [])):
-        candidates = [
-            {"chunk_id": "c-001:0", "score": 7.5, "path": "fake/p1.json"},
-            {"chunk_id": "c-002:0", "score": 5.1, "path": "fake/p2.json"},
-        ]
-        out = rerank.rerank("query", candidates, top_k=5)
-        assert_eq("rerank no-op preserves order", ["c-001:0", "c-002:0"],
-                  [c["chunk_id"] for c in out])
-        assert_true("rerank no-op tags source",
-                    all(c.get("rerank_source") == "noop-no-ollama" for c in out))
-        assert_true("rerank no-op copies score to rerank_score",
-                    all(c["rerank_score"] == c["score"] for c in out))
+    with unittest.mock.patch.object(rerank, "load_rerank_config", return_value={}):
+        with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(False, [])):
+            candidates = [
+                {"chunk_id": "c-001:0", "score": 7.5, "path": "fake/p1.json"},
+                {"chunk_id": "c-002:0", "score": 5.1, "path": "fake/p2.json"},
+            ]
+            out = rerank.rerank("query", candidates, top_k=5)
+            assert_eq("rerank no-op preserves order", ["c-001:0", "c-002:0"],
+                      [c["chunk_id"] for c in out])
+            assert_true("rerank no-op tags source",
+                        all(c.get("rerank_source") == "noop-no-ollama" for c in out))
+            assert_true("rerank no-op copies score to rerank_score",
+                        all(c["rerank_score"] == c["score"] for c in out))
 
 
 def test_rerank_noop_when_model_missing():
     """When ollama is up but model isn't pulled, rerank should still no-op."""
-    with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(True, ["other-model"])):
-        candidates = [{"chunk_id": "c-001:0", "score": 5.0, "path": "x"}]
-        out = rerank.rerank("query", candidates, top_k=5)
-        assert_eq("rerank no-op for missing model", "noop-no-model", out[0]["rerank_source"])
+    with unittest.mock.patch.object(rerank, "load_rerank_config", return_value={}):
+        with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(True, ["other-model"])):
+            candidates = [{"chunk_id": "c-001:0", "score": 5.0, "path": "x"}]
+            out = rerank.rerank("query", candidates, top_k=5)
+            assert_eq("rerank no-op for missing model", "noop-no-model", out[0]["rerank_source"])
 
 
 def test_rerank_truncates_to_top_k():
-    with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(False, [])):
-        candidates = [{"chunk_id": f"c-{i:03}:0", "score": float(i), "path": "x"} for i in range(10)]
-        out = rerank.rerank("query", candidates, top_k=3)
-        assert_eq("rerank truncates to top_k", 3, len(out))
+    with unittest.mock.patch.object(rerank, "load_rerank_config", return_value={}):
+        with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(False, [])):
+            candidates = [{"chunk_id": f"c-{i:03}:0", "score": float(i), "path": "x"} for i in range(10)]
+            out = rerank.rerank("query", candidates, top_k=3)
+            assert_eq("rerank truncates to top_k", 3, len(out))
+
+
+def test_choose_backend_prefers_api_when_ollama_unavailable():
+    """在 auto 模式下，如果 ollama 不可用但 API 配置齐全，应选择 api backend。"""
+    cfg = {
+        "backend": "auto",
+        "api": {
+            "base_url": "https://example.invalid/v1",
+            "api_key": "test-key",
+            "model": "test-embed-model",
+        }
+    }
+    with unittest.mock.patch.object(rerank, "load_rerank_config", return_value=cfg):
+        with unittest.mock.patch.object(rerank, "ollama_alive", return_value=(False, [])):
+            backend, meta = rerank.choose_backend()
+    assert_eq("auto backend falls through to api", "api", backend)
+    assert_eq("api backend records model", "test-embed-model", meta.get("model"))
+
+
+def test_rerank_uses_api_backend_when_configured():
+    """没有 ollama 但 API 可用时，应通过 API embeddings 完成 rerank。"""
+    cfg = {
+        "backend": "api",
+        "api": {
+            "base_url": "https://example.invalid/v1",
+            "api_key": "test-key",
+            "model": "test-embed-model",
+        }
+    }
+    candidates = [
+        {"chunk_id": "c-001:0", "score": 1.0, "path": "fake/p1.json"},
+        {"chunk_id": "c-002:0", "score": 2.0, "path": "fake/p2.json"},
+    ]
+    chunk_map = {
+        "fake/p1.json": {"body_hash": "sha256:p1", "contextualized_text": "alpha"},
+        "fake/p2.json": {"body_hash": "sha256:p2", "contextualized_text": "beta"},
+    }
+
+    def fake_embed(provider_meta, text):
+        vectors = {
+            "query": [1.0, 0.0],
+            "alpha": [0.95, 0.05],
+            "beta": [0.10, 0.90],
+        }
+        return vectors[text]
+
+    with unittest.mock.patch.object(rerank, "load_rerank_config", return_value=cfg):
+        with unittest.mock.patch.object(rerank, "api_ready", return_value=(True, {
+            "backend": "api",
+            "base_url": cfg["api"]["base_url"],
+            "api_key": cfg["api"]["api_key"],
+            "model": cfg["api"]["model"],
+        })):
+            with unittest.mock.patch.object(rerank, "load_chunk",
+                                            side_effect=lambda path: chunk_map.get(path)):
+                with unittest.mock.patch.object(rerank, "embed_one", side_effect=fake_embed):
+                    with unittest.mock.patch.object(rerank, "load_cache", return_value={}):
+                        with unittest.mock.patch.object(rerank, "save_cache"):
+                            out = rerank.rerank("query", candidates, top_k=2)
+    assert_eq("api rerank moves alpha ahead of beta", ["c-001:0", "c-002:0"],
+              [c["chunk_id"] for c in out])
+    assert_eq("api rerank tags backend", "cosine:api:test-embed-model", out[0]["rerank_source"])
 
 
 # ─── retrieve.py CLI: exit 10 when not provisioned ────────────────────────────
@@ -332,6 +397,8 @@ def main():
     test_rerank_noop_when_ollama_unreachable()
     test_rerank_noop_when_model_missing()
     test_rerank_truncates_to_top_k()
+    test_choose_backend_prefers_api_when_ollama_unavailable()
+    test_rerank_uses_api_backend_when_configured()
     test_retrieve_exits_10_without_index()
     test_end_to_end_with_synthetic_chunks()
     test_explain_flag_adds_diagnostics_block()

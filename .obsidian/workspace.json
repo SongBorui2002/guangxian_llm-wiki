@@ -4,17 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "477f1cf965ca606e",
+        "id": "5654b0bfb9a7a58e",
         "type": "tabs",
         "children": [
           {
-            "id": "a31de1b302cdc5cf",
+            "id": "a7c07c02fa05c806",
             "type": "leaf",
             "state": {
               "type": "graph",
               "state": {},
               "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "title": "关系图谱"
             }
           }
         ]
@@ -40,7 +40,7 @@
                 "autoReveal": false
               },
               "icon": "lucide-folder-closed",
-              "title": "Files"
+              "title": "文件列表"
             }
           },
           {
@@ -177,15 +177,42 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
-      "canvas:Create new canvas": false,
-      "daily-notes:Open today's daily note": false,
-      "templates:Insert template": false,
-      "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false,
+      "obsidian-excalidraw-plugin:新建绘图文件": false
     }
   },
-  "active": "a31de1b302cdc5cf",
-  "lastOpenFiles": []
+  "active": "a7c07c02fa05c806",
+  "lastOpenFiles": [
+    "docs/prototype-evaluation.md",
+    "frontend/design-dff733ab-c4ae-46fe-a6b9-b9f80af5340f.html",
+    "frontend/design-eed1e564-1105-4ea5-97cd-337b0ed7ef75.html",
+    "frontend",
+    "wiki/frontend",
+    "wiki/concepts/DaVinci 色彩空间与 ACES.md",
+    "wiki/workflows/DaVinci YRGB CST 手动色彩管理.md",
+    "scripts/__pycache__/bm25-index.cpython-314.pyc",
+    "scripts/__pycache__/rerank.cpython-314.pyc",
+    "scripts/__pycache__/retrieve.cpython-314.pyc",
+    "wiki/sources/Transkoder 2025 用户指南.md",
+    "wiki/sources/DaVinci Resolve 20.2 参考手册.md",
+    "wiki/meta/lint-report-2026-06-08.md",
+    "未命名.base",
+    "wiki/sources/Transkoder-2025-User-Guide.md",
+    "wiki/entities/Colorfront.md",
+    "wiki/concepts/Compounding Knowledge.md",
+    "wiki/concepts/cherry-picks.md",
+    "assets/diagrams/multi-writer-locking.svg",
+    "assets/diagrams/hybrid-retrieval.svg",
+    "assets/social-preview.png",
+    "WIKI.md",
+    "CHANGELOG.md",
+    "ATTRIBUTION.md",
+    "AGENTS.md"
+  ]
 }

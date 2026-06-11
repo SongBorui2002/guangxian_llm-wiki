@@ -32,7 +32,7 @@ Work through these in order:
 1. **Orphan pages**. Wiki pages with no inbound wikilinks. They exist but nothing points to them.
 2. **Dead links**. Wikilinks that reference a page that does not exist.
 3. **Stale claims**. Assertions on older pages that newer sources have contradicted or updated.
-4. **Missing pages**. Concepts or entities mentioned in multiple pages but lacking their own page.
+4. **Missing pages**. Concepts, entities, or workflows mentioned in multiple pages but lacking their own page.
 5. **Missing cross-references**. Entities mentioned in a page but not linked.
 6. **Frontmatter gaps**. Pages missing required fields (type, status, created, updated, tags).
 7. **Empty sections**. Headings with no content underneath.
@@ -138,6 +138,11 @@ LIST FROM "wiki" WHERE status = "seed" SORT updated ASC
 LIST FROM "wiki/entities" WHERE !sources OR length(sources) = 0
 ```
 
+## Recent Workflows
+```dataview
+TABLE workflow_type, status, updated FROM "wiki/workflows" SORT updated DESC LIMIT 10
+```
+
 ## Open Questions
 ```dataview
 LIST FROM "wiki/questions" WHERE answer_quality = "draft" SORT created DESC
@@ -166,7 +171,7 @@ Create or update `wiki/meta/overview.canvas` for a visual domain map:
 }
 ```
 
-Add one node per domain page. Connect domains that have significant cross-references. Colors map to the CSS scheme: 1=blue, 2=purple, 3=yellow, 4=orange, 5=green, 6=red.
+Add one node per domain page and optionally one node per high-value workflow page. Connect nodes that have significant cross-references. Colors map to the CSS scheme configured for the vault.
 
 ---
 

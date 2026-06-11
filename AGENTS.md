@@ -1,8 +1,10 @@
 # claude-obsidian: Agent Instructions
 
-This repo is a Claude Code plugin **and** an Obsidian vault that builds persistent, compounding knowledge bases using Andrej Karpathy's LLM Wiki pattern. It works with **any AI coding agent** that supports the Agent Skills standard, including Codex CLI, OpenCode, and similar.
+This repo is an Obsidian vault and cross-agent skill pack for building persistent, compounding knowledge bases using Andrej Karpathy's LLM Wiki pattern. This fork is being adapted as an **enterprise internal wiki MVP** for software manuals, platform guides, operational procedures, and internal technical notes.
 
-Originally built for Claude Code, the skills follow the cross-platform Agent Skills spec. Newer skills (`wiki-fold`, `wiki-ingest`, `wiki-lint`) use only `name` and `description` frontmatter (kepano convention). Some older skills still carry an optional `allowed-tools` field for Claude Code compatibility; cross-platform agents that do not recognize it should ignore it.
+It is intended to work with any AI coding agent that supports the Agent Skills standard, including Codex CLI, Claude Code, OpenCode, and similar tools.
+
+The core rule is simple: **raw sources stay immutable, the wiki is LLM-maintained, and the schema files (`AGENTS.md` / `CLAUDE.md`) define the maintenance discipline.**
 
 ## Skills Discovery
 
@@ -38,13 +40,66 @@ bash bin/setup-multi-agent.sh
 | `obsidian-markdown` | obsidian syntax, wikilink, callout |
 | `obsidian-bases` | obsidian bases, .base file, dynamic table |
 
-## Key Conventions
+## Architecture
 
-- **Vault root**: the directory containing `wiki/` and `.raw/`
-- **Hot cache**: `wiki/hot.md` (read at session start, updated at session end)
-- **Source documents**: `.raw/` (immutable: agents never modify these)
-- **Generated knowledge**: `wiki/` (agent-owned, links to sources via wikilinks)
-- **Manifest**: `.raw/.manifest.json` tracks ingested sources (delta tracking)
+Three layers:
+
+1. **Raw sources**: `.raw/` stores the source of truth. Agents read from it but do not rewrite the underlying source material.
+2. **Wiki**: `wiki/` stores synthesized Markdown pages maintained by the agent.
+3. **Schema**: `AGENTS.md` and `CLAUDE.md` define structure, naming, ingest/query/lint behavior, and filing conventions.
+
+## Vault Structure
+
+```text
+.raw/
+  documents/     normalized document sources, exported HTML bundles, text extracts
+  images/        screenshots, diagrams, scans, OCR-derived source notes
+  code-data/     code snippets, configs, structured data extracts
+  repos/         shallow-cloned repositories treated as raw source material
+
+wiki/
+  index.md
+  overview.md
+  log.md
+  hot.md
+  sources/
+  entities/
+  concepts/
+  workflows/
+  domains/
+  comparisons/
+  questions/
+  meta/
+  canvases/
+```
+
+Legacy `.raw/*.md` files in older vaults are still readable and ingestible. New source normalization should prefer the typed subfolders above.
+
+## Page Semantics
+
+- `sources/`: one wiki page per ingested source or normalized source bundle
+- `entities/`: people, teams, orgs, products, services, repositories, platforms
+- `concepts/`: terms, mechanisms, rules, abstractions, standards, recurring technical ideas
+- `workflows/`: repeatable how-to knowledge, procedures, runbooks, task flows, packaging steps, troubleshooting flows
+- `domains/`: top-level business or platform entry points for navigation
+- `comparisons/`: cross-system or cross-version analyses
+- `questions/`: durable answers and analyses worth keeping
+- `meta/`: dashboards, lint reports, conventions, maintenance artifacts
+- `canvases/`: optional Obsidian canvas views tied to the wiki
+
+## Operating Rules
+
+- **Wiki-first query path**: answer from `wiki/hot.md`, `wiki/index.md`, sub-indexes, and relevant wiki pages first.
+- **User-driven escalation**: if the user explicitly wants more detail, stronger evidence, exact source grounding, or a return to the original material, escalate from wiki-only answering to raw locate in normalized raw sources.
+- **Retrieval after raw locate**: after raw locate narrows the candidate sections, use retrieval against raw or chunked material only if the narrowed set is still broad enough to need reranking.
+- **Ingest is compilation, not summary**: the goal of ingest is to compile source material into wiki pages that reduce future query-time fallback to raw sections.
+- **Self-interrogation on large sources**: manuals, platform guides, and process documents should be interrogated for likely future questions, stable workflows, and recurring settings or concepts, not only summarized.
+- **Automatic write-back**: high-value ingest and query results should update the wiki directly rather than waiting for manual confirmation.
+- **Source immutability**: do not rewrite the user's underlying documents, images, or repositories. Normalized markdown derivatives are allowed as ingest inputs inside `.raw/`.
+- **Repository sources**: treat `.raw/repos/` as first-class sources, but only when the source is an actual git repository. Do not classify a plain local folder as `repo`; local HTML bundles belong under `.raw/documents/`. Repositories may be shallow-cloned and scanned broadly, but noisy directories and binary-heavy assets should usually be skipped during synthesis.
+- **HTML bundles**: local `html + asset directory` source sets should be treated as document bundles. Preserve path traceability in the normalized markdown.
+- **Section-grounded synthesis**: when a source is split into meaningful sections, key workflow and concept pages should cite the specific section pages that support them, not only the top-level source page.
+- **Manifest**: `.raw/.manifest.json` tracks deltas and page updates per source.
 
 ## Bootstrap
 

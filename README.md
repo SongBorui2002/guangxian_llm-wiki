@@ -1,5 +1,5 @@
 
-# claude-obsidian: Self-Organizing AI Second Brain for Obsidian + Claude Code
+# claude-obsidian: Enterprise LLM Wiki Vault for Obsidian + Claude Code
 
 <p align="center">
   <img src="wiki/meta/claude-obsidian-gif-cover-16x9.gif" alt="claude-obsidian: persistent compounding wiki vault for Claude Code and Obsidian" width="100%" />
@@ -15,9 +15,9 @@
 [![Community](https://img.shields.io/badge/AI%20Marketing%20Hub-Pro%20community-purple)](https://www.skool.com/ai-marketing-hub-pro)
 [![Blog Post](https://img.shields.io/badge/Deep_Dive-Blog_Post-22c55e)](https://agricidaniel.com/blog/claude-obsidian-ai-second-brain)
 
-Claude + Obsidian knowledge companion and self-organizing AI second brain. A running AI notetaker that builds and maintains a persistent, compounding wiki vault. Every source you add gets integrated. Every question you ask pulls from everything that has been read. Knowledge compounds like interest.
+claude-obsidian is an Obsidian-based LLM-Wiki vault for internal documentation, software manuals, platform guides, operational runbooks, and project knowledge. It turns raw materials into a maintained Markdown wiki that compounds over time instead of forcing the model to rediscover everything from scratch on every question.
 
-Open-source Obsidian AI plugin for AI note-taking, personal knowledge management (PKM), second-brain workflows, and a private Notion alternative. **15 Claude Code skills**, multi-agent support, multi-writer safe (v1.7+), first-class methodology modes (LYT / PARA / Zettelkasten / Generic via v1.8), and the 10-principle thinking framework (v1.9). Based on [Andrej Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+This branch is optimized for a **wiki-first enterprise knowledge base prototype**. Raw source material lives under `.raw/`, the LLM maintains `wiki/`, and queries default to the wiki before falling back to deeper source checks. **15 Claude Code skills**, multi-agent support, multi-writer safety (v1.7+), methodology modes (LYT / PARA / Zettelkasten / Generic via v1.8), and the 10-principle thinking framework (v1.9) are all still available. The overall shape follows [Andrej Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
 
 > **Two ways to get this skill.** Pick the one that fits how you work.
 >
@@ -32,7 +32,9 @@ Open-source Obsidian AI plugin for AI note-taking, personal knowledge management
 
 - [What It Does](#what-it-does)
 - [Why claude-obsidian?](#why-claude-obsidian)
+- [Why Wiki-First, Not Plain RAG?](#why-wiki-first-not-plain-rag)
 - [Quick Start](#quick-start)
+- [Supported Source Types](#supported-source-types)
 - [Commands](#commands)
   - [`/wiki`: setup, scaffold, continue](#wiki-setup-scaffold-continue)
   - [`/autoresearch`: autonomous research loop](#autoresearch-autonomous-research-loop)
@@ -69,9 +71,11 @@ Open-source Obsidian AI plugin for AI note-taking, personal knowledge management
   <img src="wiki/meta/welcome-canvas.gif" alt="claude-obsidian welcome canvas: visual demo of the wiki vault workflow" width="96%" />
 </p>
 
-You drop sources. Claude reads them, extracts entities and concepts, updates cross-references, and files everything into a structured Obsidian vault. The wiki gets richer with every ingest.
+You drop source material into `.raw/`. Claude reads manuals, help pages, internal process docs, screenshots, and repository documentation, then compiles them into source, entity, concept, workflow, and domain pages inside a structured Obsidian vault.
 
-You ask questions. Claude reads the hot cache (recent context), scans the index, drills into relevant pages, and synthesizes an answer. It cites specific wiki pages, not training data.
+You ask questions. Claude reads the hot cache, scans the index, drills into relevant wiki pages, and synthesizes an answer from the maintained knowledge layer first. It cites specific wiki pages, not training data.
+
+If you explicitly ask to go deeper, give evidence, or return to the source material, Claude escalates back toward normalized raw documents instead of pretending the wiki is complete.
 
 You lint. Claude finds orphans, dead links, stale claims, and missing cross-references. Your wiki stays healthy without manual cleanup.
 
@@ -86,7 +90,7 @@ At the end of every session, Claude updates a hot cache. The next session starts
 
 ## Why claude-obsidian?
 
-Most Obsidian AI plugins are chat interfaces. They answer questions about your existing notes. claude-obsidian is a knowledge engine. It creates, organizes, maintains, and evolves your notes autonomously.
+Most Obsidian AI plugins are chat interfaces. They answer questions about your existing notes. claude-obsidian is a knowledge engine. In this branch, it is aimed less at personal PKM and more at turning enterprise documentation into a maintained wiki that can answer operational questions later.
 
 | Capability | claude-obsidian | Smart Connections | Copilot |
 |---|---|---|---|
@@ -108,6 +112,23 @@ Most Obsidian AI plugins are chat interfaces. They answer questions about your e
 
 ---
 
+## Why Wiki-First, Not Plain RAG?
+
+This prototype is not trying to be "just another document retriever." The primary artifact is the maintained wiki, not the retrieval result.
+
+| Dimension | This vault | Plain RAG |
+|---|---|---|
+| Primary working layer | `wiki/*.md` synthesized pages | raw chunks at query time |
+| Default query path | `hot.md -> index.md -> wiki pages` | retrieve raw chunks first |
+| Knowledge compounding | good answers and new structure can be filed back | answers are often ephemeral |
+| Strongest use case | synthesis, procedures, evolving internal knowledge | broad recall over large corpora |
+| Role of retrieval here | fallback for evidence, gaps, and deeper source checks | main mechanism |
+| Current prototype status | wiki-first is implemented; deeper raw checks are guided by skill rules; raw-native retrieval is still evolving | n/a |
+
+That distinction matters for enterprise manuals and platform guides. A plain RAG stack is good at finding passages. A wiki-first stack is better at accumulating reusable task knowledge such as settings, prerequisites, troubleshooting flows, and end-to-end procedures.
+
+---
+
 ## Quick Start
 
 > ℹ️ The commands below install the **public open-source build** from `AgriciDaniel/claude-obsidian` (recommended, no membership needed). **AI Marketing Hub Pro members** who want early access to in-development features can swap `AgriciDaniel/claude-obsidian` for `AI-Marketing-Hub/claude-obsidian` (Option 2 also swaps the plugin slug; see the note under that option).
@@ -118,6 +139,7 @@ Most Obsidian AI plugins are chat interfaces. They answer questions about your e
 git clone https://github.com/AgriciDaniel/claude-obsidian
 cd claude-obsidian
 bash bin/setup-vault.sh
+bash scripts/detect-transport.sh
 ```
 
 Open the folder in Obsidian: **Manage Vaults → Open folder as vault → select `claude-obsidian/`**.
@@ -125,6 +147,14 @@ Open the folder in Obsidian: **Manage Vaults → Open folder as vault → select
 Open Claude Code in the same folder. Type `/wiki`.
 
 > ℹ️ `setup-vault.sh` configures `graph.json` (filter + colors), `app.json` (excludes plugin dirs), and `appearance.json` (enables CSS). Run it once before the first Obsidian open. You get the fully pre-configured graph view, color scheme, and wiki structure out of the box.
+
+Recommended first run after setup:
+
+1. Put source materials into the typed `.raw/` folders described below.
+2. Run `bash scripts/detect-transport.sh` to snapshot the best available write path in `.vault-meta/transport.json`.
+3. Use `ingest <path-or-url>` to compile the material into the wiki.
+4. Ask questions against the wiki first.
+5. Only if the answer is thin, explicitly ask to go back to the source material.
 
 ---
 
@@ -162,11 +192,32 @@ Copy `WIKI.md` into your vault root. Paste into Claude:
 ```
 Read WIKI.md in this project. Then:
 1. Check if Obsidian is installed. If not, install it.
-2. Check if the Local REST API plugin is running on port 27124.
-3. Configure the MCP server.
+2. Detect the best available transport (Obsidian CLI, MCP, or filesystem fallback).
+3. Configure MCP only if needed.
 4. Ask me ONE question: "What is this vault for?"
 Then scaffold the full wiki structure.
 ```
+
+---
+
+## Supported Source Types
+
+The current prototype is built around typed raw-source folders:
+
+| Folder | Typical inputs | Current handling |
+|---|---|---|
+| `.raw/documents/` | `pdf`, `doc`, `docx`, `rtf`, `odt`, `txt`, `md`, local `html`, `html + attachments` | normalized into ingest-ready Markdown, then compiled into wiki pages |
+| `.raw/images/` | screenshots, scans, diagrams, whiteboards | image is described, OCR/notes are saved as Markdown sidecars, then ingested |
+| `.raw/code-data/` | config exports, data extracts, structured snippets | treated as source artifacts for later synthesis |
+| `.raw/repos/` | local git repos or repository URLs | cloned or mirrored, then summarized as documentation-oriented source material |
+
+Normalization helpers currently used by `wiki-ingest`:
+
+- `scripts/normalize-pdf.py`: convert document-like files into ingest-ready Markdown.
+- `scripts/normalize-html-bundle.py`: convert a local HTML page or `html + attachments` bundle into traceable Markdown pages plus an entry page.
+- `scripts/normalize-repo.py`: create a documentation-oriented snapshot page for a git repository source.
+
+Important scope rule for repositories: repo sources are treated as **document sources**, not full-code search surfaces. README files, docs, guides, and descriptive text are in scope. Binary files, generated noise, and most source-code files are not the primary retrieval target for this MVP.
 
 ---
 
@@ -175,9 +226,9 @@ Then scaffold the full wiki structure.
 | You say | Claude does |
 |---------|------------|
 | `/wiki` | Setup check, scaffold, or continue where you left off |
-| `ingest [file]` | Read source, create 8-15 wiki pages, update index and log |
+| `ingest [file]` | Copy/clone into the right `.raw/` folder if needed, normalize when required, then create 8-15 wiki pages and update index/log |
 | `ingest all of these` | Batch process multiple sources, then cross-reference |
-| `what do you know about X?` | Read index, drill into relevant pages, synthesize answer |
+| `what do you know about X?` | Read hot/index/wiki pages first, then synthesize a wiki-first answer |
 | `/save` | File the current conversation as a wiki note |
 | `/save [name]` | Save with a specific title (skips the naming question) |
 | `/autoresearch [topic]` | Run the autonomous research loop: search, fetch, synthesize, file |
@@ -199,7 +250,7 @@ Then scaffold the full wiki structure.
 First-run setup walks through:
 
 1. Check Obsidian is installed
-2. Check Local REST API plugin (if MCP transport desired)
+2. Detect the best available transport (`obsidian`, `obsidian-cli`, MCP, or filesystem fallback)
 3. Ask "What is this vault for?" (one question, drives the scaffold)
 4. Scaffold per chosen [Methodology Mode](#methodology-modes-v18) and [Vault Use Case](#vault-use-cases-v10)
 5. Seed `hot.md`, `index.md`, `log.md`, `wiki/meta/dashboard.base`
@@ -221,7 +272,7 @@ The loop:
 1. **Round 1, broad search**: decompose into 3-5 angles, run 2-3 queries per angle, fetch top 2-3 results per angle
 2. **Round 2, gap fill**: targeted searches for contradictions and missing pieces
 3. **Round 3, synthesis check** (optional): one more pass if major gaps remain
-4. **Filing**: synthesis page + source pages + entity pages + concept pages, all cross-referenced
+4. **Filing**: synthesis page + source pages + entity pages + concept pages + workflow pages, all cross-referenced
 
 URL validation + content sanitization applied per the `## Web egress hygiene (v1.8.2+)` policy in [`skills/autoresearch/SKILL.md`](skills/autoresearch/SKILL.md): rejects `file://` / `javascript:` / RFC1918 hosts, strips `<script>` and wikilink-injection attempts, caps fetch bodies at 50KB.
 
@@ -258,7 +309,7 @@ Four organizational philosophies, opt-in via `bash bin/setup-mode.sh`. The `wiki
 
 | Mode | Philosophy | Filing convention |
 |------|-----------|-------------------|
-| **Generic** (default) | No opinion. v1.7 behavior preserved. | `wiki/sources/`, `wiki/entities/`, `wiki/concepts/`, `wiki/sessions/` |
+| **Generic** (default) | Explicit wiki-first knowledge folders. Best fit for the enterprise MVP. | `wiki/sources/`, `wiki/entities/`, `wiki/concepts/`, `wiki/workflows/`, `wiki/sessions/` |
 | **LYT** (Linking Your Thinking) | Notes link, folders don't. MOCs are the navigation primitive. | `wiki/mocs/<topic>-moc.md` + `wiki/notes/<atomic-note>.md` |
 | **PARA** (Tiago Forte) | Organize by actionability (Projects, Areas, Resources, Archives). | `wiki/projects/`, `wiki/areas/`, `wiki/resources/`, `wiki/archives/` |
 | **Zettelkasten** (Luhmann slip-box) | Atomic notes, unique IDs, dense bidirectional linking, no folders. | `wiki/<YYYYMMDDHHMMSSffffff>-<slug>.md` (flat, timestamped) |
@@ -297,6 +348,7 @@ When you need context not already in this project:
 2. If not enough, read wiki/index.md
 3. If you need domain details, read the relevant domain sub-index
 4. Only then drill into specific wiki pages
+5. Only if the user explicitly asks to go deeper, return to normalized raw material and retrieval fallback
 
 Do NOT read the wiki for general coding questions or tasks unrelated to [domain].
 ```
@@ -309,29 +361,39 @@ Your executive assistant, coding projects, and content workflows all draw from t
 
 A typical scaffold creates:
 
+- Typed raw-source folders under `.raw/` (`documents/`, `images/`, `code-data/`, `repos/`)
 - Folder structure for your chosen use case + methodology mode
 - `wiki/index.md`: master catalog
 - `wiki/log.md`: append-only operation log
 - `wiki/hot.md`: recent context cache
 - `wiki/overview.md`: executive summary
+- `wiki/workflows/`: procedural knowledge pages and `_index.md`
+- `wiki/domains/`: top-level navigation pages and `_index.md`
 - `wiki/meta/dashboard.base`: Bases dashboard (primary, native Obsidian)
 - `wiki/meta/dashboard.md`: Legacy Dataview dashboard (optional fallback)
 - `_templates/`: Obsidian Templater templates for each note type
 - `.obsidian/snippets/vault-colors.css`: color-coded file explorer
+- Vault `AGENTS.md`: cross-agent schema and operating rules
 - Vault `CLAUDE.md`: auto-loaded project instructions
 
 ---
 
 ## Architecture
 
-Three diagrams explain the substantive design choices of the plugin.
+The current enterprise MVP follows the three-layer LLM-Wiki shape:
+
+1. **Raw sources**: immutable source material under `.raw/` (`documents/`, `images/`, `code-data/`, `repos/`)
+2. **The wiki**: LLM-maintained Markdown pages under `wiki/` (`sources/`, `entities/`, `concepts/`, `workflows/`, `domains/`, `questions/`, `comparisons/`, `meta/`, `canvases/`)
+3. **The schema**: operating rules in `AGENTS.md`, `CLAUDE.md`, and the `skills/` directory
+
+The point of the architecture is to keep the wiki as the primary working memory. Retrieval exists to support the wiki, not replace it.
 
 ### Vault flow
 
-Sources land in `.raw/`. The `/wiki-ingest` agent reads each source, extracts entities and concepts, files them into the appropriate `wiki/` subfolder (per active methodology mode), and updates the index, log, and hot cache. Queries read hot → index → pages in that order to keep token cost low.
+Sources land in `.raw/`. The `/wiki-ingest` agent reads each source, normalizes complex formats when needed, extracts entities, concepts, and workflows, files them into the appropriate `wiki/` subfolder (per active methodology mode), and updates the index, log, and hot cache. Queries read hot → index → pages first, then use deeper source checks only when the user explicitly asks for more evidence or the wiki is clearly insufficient.
 
 <p align="center">
-  <img src="assets/diagrams/vault-flow.svg" alt="Architecture diagram: sources flow into the wiki-ingest agent, which produces entity, concept, and source pages. The index and hot cache are updated. The wiki-query interface reads the cache, index, and pages to synthesize cited answers." width="100%" />
+  <img src="assets/diagrams/vault-flow.svg" alt="Architecture diagram: sources flow into the wiki-ingest agent, which produces source, entity, concept, and workflow pages. The index and hot cache are updated. The wiki-query interface reads the cache, index, and pages first, then falls back to retrieval when needed." width="100%" />
 </p>
 
 ### Multi-writer safety (v1.7+)
@@ -342,15 +404,22 @@ Parallel ingest sub-agents can target the same wiki page if the user batches mul
   <img src="assets/diagrams/multi-writer-locking.svg" alt="Architecture diagram: two parallel writers attempt to acquire a lock on the same wiki page via wiki-lock.sh. One writer is granted, writes the page, and releases the lock. The other writer logs the skip and retries on the next pass. No corruption, no half-written pages." width="100%" />
 </p>
 
-### Hybrid retrieval (v1.7+, opt-in)
+### Retrieval fallback (v1.7+, opt-in)
 
-The `/wiki-retrieve` skill ships a three-tier retrieval pipeline based on [Anthropic's Sept 2024 contextual retrieval research](https://www.anthropic.com/news/contextual-retrieval). BM25 is the always-on sparse layer. The contextual-prefix tier is consent-gated (`--allow-egress`) for users who want to send page bodies to the Anthropic API for prefix generation. Cosine rerank uses a local ollama model by default. The 50-query benchmark in v1.7 measured +32 percentage points top-1 accuracy and +41 percent error reduction vs the v1.6 baseline.
+The `/wiki-retrieve` skill ships a three-tier retrieval pipeline based on [Anthropic's Sept 2024 contextual retrieval research](https://www.anthropic.com/news/contextual-retrieval). BM25 is the always-on sparse layer. The contextual-prefix tier is consent-gated (`--allow-egress`) for users who want to send page bodies to the Anthropic API for prefix generation. Cosine rerank uses a local ollama model by default and can also use an API embedding backend via `.vault-meta/rerank-config.json`.
+
+Important current-state note for this branch: the implemented retrieval pipeline still provisions chunk state under `.vault-meta/` from the **wiki layer**. The query policy is still wiki-first, and deeper raw checks are currently driven first by `wiki-query` skill rules (`rg`/`grep` over normalized source material). In other words:
+
+- `wiki-first querying` is implemented
+- `retrieval infrastructure` is implemented
+- `raw locate for explicit deepening` is implemented at the skill level
+- `full raw-native retrieval replacement` is still being refined and should not be overstated as complete
 
 <p align="center">
   <img src="assets/diagrams/hybrid-retrieval.svg" alt="Architecture diagram: user query feeds both BM25 sparse search and an optional contextual-prefix Anthropic API call. Both feed a cosine rerank via local ollama embeddings. The output is a ranked list of candidates with --explain traceability for every score." width="100%" />
 </p>
 
-> ℹ️ Provision the pipeline with `bash bin/setup-retrieve.sh`. It builds the BM25 index, prompts for egress consent, and validates the ollama connection. The pipeline degrades gracefully: if any tier is unavailable, the rest still return useful results.
+> ℹ️ Provision the pipeline with `bash bin/setup-retrieve.sh`. It builds chunk and BM25 state under `.vault-meta/`, prompts for egress consent, and validates the local rerank path. The pipeline degrades gracefully: if any tier is unavailable, the rest still return useful results.
 
 ---
 
@@ -482,21 +551,26 @@ claude-obsidian/
 ├── commands/                     # slash command entry points
 ├── hooks/
 │   └── hooks.json               # SessionStart + Stop + PostToolUse hooks
-├── scripts/                      # 12 helper scripts (transport, locking, retrieval, etc.)
+├── scripts/                      # helper scripts (transport, locking, retrieval, normalization, etc.)
 ├── tests/                        # 9 hermetic test suites (~1240 assertions, make test)
 ├── bin/                          # 5 setup scripts (setup-vault, setup-retrieve, setup-mode, etc.)
 ├── _templates/                   # Obsidian Templater templates
 ├── wiki/                         # seeded vault content (demo)
 │   ├── canvases/                # welcome.canvas + main.canvas
+│   ├── comparisons/             # saved side-by-side analyses and tradeoff pages
 │   ├── concepts/                # seeded: LLM Wiki Pattern, Hot Cache, Compounding Knowledge
+│   ├── domains/                 # domain entry pages and _index.md
 │   ├── entities/                # seeded: Andrej Karpathy
+│   ├── questions/               # saved answers and derived Q&A pages
 │   ├── sources/                 # populated by your first ingest
+│   ├── workflows/               # procedural pages populated by your first ingest
 │   └── meta/
 │       ├── dashboard.base       # Bases dashboard (primary)
 │       └── dashboard.md         # Legacy Dataview dashboard (optional)
 ├── docs/                         # guides + audits + release notes
-├── .raw/                         # source documents (hidden in Obsidian)
+├── .raw/                         # immutable raw-source folders: documents, images, code-data, repos
 ├── .obsidian/snippets/           # vault-colors.css (3-color scheme)
+├── AGENTS.md                     # cross-agent schema and operating rules
 ├── WIKI.md                       # full schema reference
 ├── CLAUDE.md                     # project instructions
 └── README.md                     # this file
@@ -522,8 +596,12 @@ The default program works for general research. Override it for your domain. A m
 This repo ships with a seeded vault. Open it in Obsidian and you will see:
 
 - `wiki/concepts/`: LLM Wiki Pattern, Hot Cache, Compounding Knowledge
+- `wiki/comparisons/`: ready for durable side-by-side analyses and decision notes
+- `wiki/domains/`: `_index.md` ready for top-level domain navigation
 - `wiki/entities/`: Andrej Karpathy
+- `wiki/questions/`: reusable answers worth filing back from chat
 - `wiki/sources/`: empty until your first ingest
+- `wiki/workflows/`: `_index.md` ready for procedure and runbook pages
 - `wiki/meta/dashboard.base`: Bases dashboard (works in any Obsidian v1.9.10+)
 - `wiki/meta/dashboard.md`: Legacy Dataview dashboard (optional fallback)
 
@@ -552,7 +630,7 @@ claude plugin install AgriciDaniel/claude-canvas
 The best AI second brain keeps your data yours. claude-obsidian stores everything as plain Markdown files you own (no database, no lock-in, no subscription) and lets Claude read, link, and organize them into one connected knowledge graph. It is free and open source (MIT).
 
 **How do I build a second brain with AI?**
-Drop any source into the vault. Claude reads it, extracts the entities and concepts, links them to what you already have, and files it into a structured Obsidian vault. You ask questions; it answers from everything it has read and cites the pages. The knowledge base gets richer and more connected with every session.
+Drop any source into the vault. Claude reads it, extracts the entities, concepts, and workflows, links them to what you already have, and files it into a structured Obsidian vault. You ask questions; it answers from everything it has read and cites the pages. The knowledge base gets richer and more connected with every session.
 
 **How do I connect Claude to Obsidian as a second brain?**
 Two lines: `git clone https://github.com/AgriciDaniel/claude-obsidian`, then `cd claude-obsidian && bash bin/setup-vault.sh`. Open the folder as an Obsidian vault, open Claude Code in the same folder, and type `/wiki`. Full steps in [Quick Start](#quick-start).
@@ -595,7 +673,7 @@ An optional opt-in extension (`bash bin/setup-dragonscale.sh`) that adds four me
 |-----------|---------|-------|
 | Claude Code | latest | https://claude.com/claude-code |
 | Obsidian | v1.9.10+ (for Bases) | https://obsidian.md. v1.6+ works with Dataview fallback. |
-| Python | 3.10+ | For the optional retrieval pipeline and the test suite |
+| Python | 3.10+ | For normalization scripts, the optional retrieval pipeline, and the test suite |
 | Bash | 4.0+ (or zsh) | For setup scripts |
 | Git | any | For vault auto-commits via the Obsidian Git plugin |
 

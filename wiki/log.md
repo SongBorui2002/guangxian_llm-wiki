@@ -23,6 +23,18 @@ Entry format: `## [YYYY-MM-DD] operation | Title`
 
 Parse recent entries: `grep "^## \[" wiki/log.md | head -10`
 
+## [2026-06-08] save | DaVinci YRGB CST 手动色彩管理
+- Type: workflow
+- Location: wiki/workflows/DaVinci YRGB CST 手动色彩管理.md
+- From: conversation on DaVinci YRGB + CST manual color management pipeline — Input/Output CST node configuration, Tone Mapping, Gamut Mapping, Shared Node strategy
+
+---
+
+## [2026-06-05] save | DCP 打包 SDR 色彩空间转换
+- Type: question
+- Location: wiki/questions/DCP 打包 SDR 色彩空间转换.md
+- From: conversation on Rec.709 Gamma 2.4 → DCP node pipeline and XYZRGB Conversion configuration
+
 ---
 
 ## [2026-04-24] save | v1.6.0 public release notes (Teams, Karpathy-style)
@@ -36,6 +48,63 @@ Parse recent entries: `grep "^## \[" wiki/log.md | head -10`
 - PII scan post-write: `docs/releases/v1.6.0.md` + all three SVGs are clean. No `/home/` paths, no real emails, no tokens.
 - Next recommended: user runs `gh release create v1.6.0 --notes-file docs/releases/v1.6.0.md` when ready to cut the public release. This also creates the annotated tag.
 
+## [2026-06-05] ingest | YYHG_gallery (DaVinci Resolve PowerGrade DRX plugin)
+
+- Source: `.raw/repos/YYHG_gallery/` (via SSH, `git@github.com:SongBorui2002/YYHG_gallery.git`)
+- Normalized: `__repo_index__.md` snapshot via `normalize-repo.py`
+- Summary: [[YYHG_gallery]]
+- Pages created (4):
+  - Source: [[YYHG_gallery]]
+  - Concepts: [[DaVinci PowerGrade Gallery]], [[DRX Grade File]]
+  - Workflows: [[DaVinci PowerGrade DRX 工作流]]
+- Pages updated: [[index]], [[hot]], [[domains/davinci-resolve/_index]]
+- Key insight: YYHG_gallery 是 DaVinci Resolve 的 PowerGrade 画廊自动化插件，通过 Lua 脚本 API 实现从 PowerGrade 相册导出 DRX 调色文件并批量应用到时间线片段。核心 API 链：Project → Gallery → GalleryStillAlbum → ExportStills("drx") → ApplyGradeFromDRX()。文档详细记录了 Gallery 对象层级和常见问题排查要点。
+
+---
+## [2026-06-05] ingest | 3 Git repositories (stereoscopic subtitles + timecode)
+
+- Sources: `.raw/repos/3dResolveSubtitle/`, `.raw/repos/StereoscopicSubtitlePlugin/`, `.raw/repos/dftt_timecode/`
+- Normalized: `__repo_index__.md` snapshots via `normalize-repo.py`
+- Summary: [[3dResolveSubtitle]], [[StereoscopicSubtitlePlugin]], [[dftt_timecode]]
+- Pages created (8):
+  - Sources: [[3dResolveSubtitle]], [[StereoscopicSubtitlePlugin]], [[dftt_timecode]]
+  - Entities: [[Alaric Hamacher]]
+  - Concepts: [[立体 3D 字幕]], [[DCDM 字幕]], [[DFTT 时间码库]]
+  - Workflows: [[立体 3D 字幕工作流]]
+- Pages updated: [[index]], [[hot]], [[domains/davinci-resolve/_index]]
+- Key insight: 三个仓库形成 DaVinci Resolve 立体字幕工具链：StereoscopicSubtitlePlugin（Electron 插件）提供核心立体字幕工作流，3dResolveSubtitle 在此基础上添加 Python XML 生成和 Resolve API 连接器，dftt_timecode 提供高精度 Python 时间码库（7 种格式、HFR 支持、Fraction 存储）。覆盖了 SMPTE DCDM 立体字幕标准（ST 428-7）、VariableZ 深度位置和影视时间码互转。
+
+---
+## [2026-06-05] ingest | DaVinci Resolve 20.2 Reference Manual
+
+- Source: `.raw/documents/DaVinci-Resolve.pdf` (199MB, extracted via pdftotext)
+- Normalized: `.raw/documents/DaVinci-Resolve.md` (191k lines, ~10.5MB)
+- Summary: [[DaVinci Resolve 20.2 参考手册]]
+- Pages created (15):
+  - Source: [[DaVinci Resolve 20.2 参考手册]]
+  - Entities: [[Blackmagic Design]], [[DaVinci Resolve 20]]
+  - Domain: [[domains/davinci-resolve/_index]]
+  - Concepts: [[DaVinci 色彩管理]], [[DaVinci 节点调色]], [[DaVinci Fusion 合成]], [[DaVinci HDR 工作流]], [[DaVinci 色彩空间与 ACES]], [[DaVinci Fairlight 音频]]
+  - Workflows: [[DaVinci 调色流程]], [[DaVinci 渲染与交付]], [[DaVinci 媒体导入与整理]], [[DaVinci 项目管理]], [[DaVinci 专业编辑（Edit Page）]]
+- Pages updated: [[index]], [[hot]]
+- Key insight: DaVinci Resolve 20 是 Blackmagic Design 的一站式后期制作软件，集成编辑（Edit）、Fusion 合成、调色（Color）和 Fairlight 音频（Fairlight）四大模块，是全球最受信赖的调色系统。手册覆盖 100+ 章节，涵盖从 Media 管理、Cut/Edit 剪辑、Fusion 合成、Color 调色（节点系统、HDR、Dolby Vision）、Fairlight 音频到 Deliver 渲染交付的完整后期流程。wiki 编译优先覆盖了调色、色彩管理、ACES、HDR、Fusion 合成、编辑和渲染交付等高频查询领域。
+
+---
+## [2026-06-05] ingest | Transkoder 2025 User Guide
+
+- Source: `.raw/documents/TKD/TKDUserGuide_dark.html`
+- Normalized: `.raw/documents/TKD/TKDUserGuide_dark_normalized/` (1 main + 42 section pages + index)
+- Summary: [[Transkoder 2025 用户指南]]
+- Pages created (16):
+  - Source: [[Transkoder 2025 用户指南]]
+  - Entities: [[COLORFRONT]], [[Transkoder 2025]]
+  - Domain: [[domains/transkoder/_index]]
+  - Concepts: [[DCP 母版制作]], [[IMF 母版制作]], [[Node Page 图像处理管线]], [[JPEG2000 编解码]], [[HDR 工作流]], [[CPL（Composition Playlist）]], [[KDM（Key Delivery Message）]], [[OV vs VF Package]]
+  - Workflows: [[Transkoder 安装指南]], [[DCP 包创建流程]], [[IMF 包创建流程]], [[Transkoder 渲染流程]], [[Transkoder 调色流程]], [[远程流媒体配置]], [[Transkoder 键盘快捷键]], [[Transkoder 故障排查]]
+- Pages updated: [[index]], [[hot]]
+- Key insight: Transkoder 2025 是 COLORFRONT 的 DCP/IMF 母版制作旗舰工具，基于 GPU 加速的 JPEG2000 引擎，支持 4K 120fps 编码、Dolby Vision HDR、Dolby Atmos 音频、NexGuard 水印和远程流媒体。手册为 177k 字的 HTML bundle，经 normalize-html-bundle.py 拆分为 42 个章节分页。wiki 编译覆盖了 DCP/IMF 创建流程、Node Page 管线、渲染配置、调色、安装和故障排查等高频查询领域。
+
+---
 ## [2026-04-24] save | DragonScale end-to-end validation pass (Teams, 6 tests)
 - Type: validation + first real fold + first real autoresearch
 - Tests executed (all green):
@@ -50,7 +119,7 @@ Parse recent entries: `grep "^## \[" wiki/log.md | head -10`
 - Scope: six-test menu the user approved. Codex gpt-5.4 for T1/T4/T6 (sub-agent delegation); chair for T0/T2/T3 (one-shot shell) and all integration (index, log, hot, commit).
 - Style: all new content uses colons or parens instead of em-dashes. Pre-existing em-dashes in index entries and wiki/concepts/_index.md left as-is (clean-room boundary; deferred to F-slice style pass).
 - Tests still green: `make test` passes (74+ assertions).
-- Integration: chair added the 3 new concepts to `wiki/index.md` and `wiki/concepts/_index.md` with colon-style descriptions so the fresh pages are discoverable. The cluster extends `[[How does the LLM Wiki pattern work?]]` and cross-references `[[LLM Wiki Pattern]]`.
+- Integration: chair added the 3 new concepts to `wiki/index.md` and `wiki/concepts/_index.md` with colon-style descriptions so the fresh pages are discoverable. The cluster extends `[[How does the LLM Wiki pattern work]]` and cross-references `[[LLM Wiki Pattern]]`.
 - Next recommended slice: either (G) commit this test batch and declare v1.6.0 validated, or (H) run a second fold k=3 now that 8 newer entries exist above this one and close the hierarchical-fold-not-yet-supported loop in a future phase.
 
 ## [2026-04-24] save | v1.6.0 closeout (Teams, chair-led)

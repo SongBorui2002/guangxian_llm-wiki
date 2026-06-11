@@ -1,4 +1,5 @@
 ---
+
 type: concept
 title: "DragonScale Memory"
 address: c-000001
@@ -16,7 +17,7 @@ tags:
   - memory
   - architecture
   - fractal
-status: proposed
+status: developing
 related:
   - "[[LLM Wiki Pattern]]"
   - "[[Compounding Knowledge]]"

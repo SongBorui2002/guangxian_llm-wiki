@@ -63,6 +63,38 @@ json_escape() {
   python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip()), end="")'
 }
 
+detect_obsidian_version() {
+  local cmd="$1"
+  local version=""
+  if version="$("$cmd" version 2>/dev/null | head -1)" && [ -n "$version" ]; then
+    printf '%s\n' "$version"
+    return 0
+  fi
+  if version="$("$cmd" --version 2>/dev/null | head -1)" && [ -n "$version" ]; then
+    printf '%s\n' "$version"
+    return 0
+  fi
+  return 1
+}
+
+looks_like_obsidian_cli_binary() {
+  local cmd="$1"
+  local resolved=""
+  resolved="$(command -v "$cmd" 2>/dev/null || true)"
+  [ -z "$resolved" ] && return 1
+  if command -v python3 >/dev/null 2>&1; then
+    resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$resolved" 2>/dev/null || printf '%s' "$resolved")"
+  fi
+  case "$resolved" in
+    */Obsidian.app/Contents/MacOS/obsidian-cli|*/Obsidian.app/Contents/MacOS/obsidian)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 mkdir -p "$META_DIR" || {
   echo "ERR: cannot create .vault-meta/ at $META_DIR" >&2
   exit 2
@@ -130,12 +162,20 @@ if command -v obsidian-cli >/dev/null 2>&1; then
   CLI_VERSION="$(printf '%s' "$CLI_VERSION_RAW" | json_escape || echo '"unknown"')"
 elif command -v obsidian >/dev/null 2>&1; then
   # Obsidian 1.12+ ships `obsidian` as the CLI binary on some platforms.
-  # We treat it as cli-capable if it accepts a --cli or --version flag without launching the GUI.
-  if obsidian --version >/dev/null 2>&1; then
+  # Support both `obsidian version` and `obsidian --version` because some
+  # builds expose the former subcommand but reject the latter flag. Some
+  # non-interactive shells also fail the version probe even though the binary
+  # is installed and usable from the user's login shell, so fall back to a
+  # path-shape check against the Obsidian.app bundled CLI binary.
+  if CLI_VERSION_RAW="$(detect_obsidian_version obsidian)"; then
     CLI_PRESENT=true
     CLI_BINARY="obsidian"
-    CLI_VERSION_RAW="$(obsidian --version 2>/dev/null | head -1 || echo unknown)"
     CLI_VERSION="$(printf '%s' "$CLI_VERSION_RAW" | json_escape || echo '"unknown"')"
+  elif looks_like_obsidian_cli_binary obsidian; then
+    CLI_PRESENT=true
+    CLI_BINARY="obsidian"
+    CLI_VERSION_RAW="unknown"
+    CLI_VERSION='"unknown"'
   fi
 fi
 # Fallback default when neither binary was found: must still be a valid JSON literal.

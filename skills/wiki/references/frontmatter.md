@@ -10,7 +10,7 @@ Every page, no exceptions:
 
 ```yaml
 ---
-type: <source|entity|concept|domain|comparison|question|overview|meta>
+type: <source|entity|concept|workflow|domain|comparison|question|overview|meta>
 title: "Human-Readable Title"
 created: 2026-04-07
 updated: 2026-04-07
@@ -21,7 +21,7 @@ status: <seed|developing|mature|evergreen>
 related:
   - "[[Other Page]]"
 sources:
-  - "[[.raw/articles/source-file.md]]"
+  - "[[.raw/documents/source-file.md]]"
 ---
 ```
 
@@ -66,6 +66,17 @@ domain: ""
 aliases:
   - "alternative name"
   - "abbreviation"
+```
+
+### workflow
+
+```yaml
+workflow_type: procedure   # procedure | runbook | checklist | troubleshooting | packaging
+domain: ""
+prerequisites:
+  - "Required access, file, or environment"
+outputs:
+  - "Expected artifact or result"
 ```
 
 ### comparison

@@ -94,8 +94,14 @@ say "✓ All 4 retrieval scripts present and executable"
 mkdir -p "$META/chunks" "$META/bm25"
 say "✓ State directories: $META/chunks/, $META/bm25/"
 
-# ── 3. Check ollama (informational) ──────────────────────────────────────────
+# ── 3. Check rerank backends (informational) ─────────────────────────────────
 OLLAMA_URL="${OLLAMA_URL:-http://127.0.0.1:11434}"
+RERANK_CFG="$META/rerank-config.json"
+API_RERANK_CONFIGURED=false
+if [ -f "$RERANK_CFG" ] && grep -q '"base_url"' "$RERANK_CFG" \
+  && grep -q '"api_key"' "$RERANK_CFG" && grep -q '"model"' "$RERANK_CFG"; then
+  API_RERANK_CONFIGURED=true
+fi
 # v1.9.1 / closes audit S4: if OLLAMA_URL was overridden to point off-machine,
 # refuse to probe unless the caller passes --allow-remote-ollama (mirrors the
 # existing scripts/tiling-check.py:351 gate). Same allowlist of localhost
@@ -127,11 +133,21 @@ if $OLLAMA_ALIVE && $MODEL_PRESENT; then
   say "✓ ollama reachable at $OLLAMA_URL with nomic-embed-text pulled (rerank will use cosine)"
 elif $OLLAMA_ALIVE; then
   warn "ollama reachable but nomic-embed-text is not pulled. Run: ollama pull nomic-embed-text"
-  warn "rerank stage will no-op until the model is available."
+  if $API_RERANK_CONFIGURED; then
+    warn "ollama model missing, but .vault-meta/rerank-config.json is present. rerank can fall back to API."
+  else
+    warn "rerank stage will no-op until the model is available."
+  fi
 else
   warn "ollama not reachable at $OLLAMA_URL"
-  warn "rerank stage will no-op until ollama is running. BM25 retrieval still works."
-  warn "Install: https://ollama.com/download; then: ollama pull nomic-embed-text"
+  if $API_RERANK_CONFIGURED; then
+    say "✓ API rerank config detected at $RERANK_CFG"
+    warn "ollama is unavailable, but rerank can fall back to the configured API backend."
+  else
+    warn "rerank stage will no-op until ollama is running or an API rerank config is added."
+    warn "Install: https://ollama.com/download; then: ollama pull nomic-embed-text"
+    warn "Or create .vault-meta/rerank-config.json from .vault-meta/rerank-config.example.json"
+  fi
 fi
 
 # ── 4. Prefix-tier picker (informational) ────────────────────────────────────

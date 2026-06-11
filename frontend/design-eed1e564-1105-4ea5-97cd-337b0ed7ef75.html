@@ -1,0 +1,351 @@
+<html lang="en" class="dark" vid="0"><head vid="1">
+    <meta charset="UTF-8" vid="2">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" vid="3">
+    <title vid="4">AI Dialog Window</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17" vid="5"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web" vid="6"></script>
+    <script vid="7">
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: {
+                            900: '#18181b',
+                            950: '#09090b',
+                        }
+                    },
+                    animation: {
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'blink': 'blink 1s step-end infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            from: { backgroundPosition: '200% 0' },
+                            to: { backgroundPosition: '-200% 0' }
+                        },
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '.8', transform: 'scale(0.95)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style vid="8">
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+        
+        .bg-shimmer {
+            background: linear-gradient(90deg, rgba(39,39,42,0) 0%, rgba(39,39,42,0.4) 50%, rgba(39,39,42,0) 100%);
+            background-size: 200% 100%;
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, #a1a1aa 0%, #e4e4e7 50%, #a1a1aa 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shimmer 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-black text-zinc-200 font-sans h-screen w-screen overflow-hidden flex items-center justify-center p-4 antialiased" vid="9">
+
+    
+    <div class="w-full h-full max-w-[800px] max-h-[600px] bg-[#050505] border border-zinc-800/80 rounded-2xl shadow-2xl flex flex-col relative overflow-hidden" vid="10">
+        
+        
+        <header class="h-14 border-b border-zinc-800/60 flex items-center justify-between px-5 shrink-0 bg-[#050505]/80 backdrop-blur-md z-10" vid="11">
+            <div class="flex items-center gap-3" vid="12">
+                <div class="w-6 h-6 flex items-center justify-center rounded-md bg-zinc-900 border border-zinc-800" vid="13">
+                    <i class="ph ph-layout text-zinc-400 text-sm" vid="14"></i>
+                </div>
+                <span class="text-sm font-medium text-zinc-300" vid="15">Design Iteration</span>
+                <span class="px-1.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-800 text-[10px] text-zinc-500 font-mono" vid="16">v2.1</span>
+            </div>
+            <div class="flex items-center gap-2" vid="17">
+                <button class="p-1.5 text-zinc-500 hover:text-zinc-300 transition-colors rounded-md hover:bg-zinc-900" vid="18"><i class="ph ph-clock-counter-clockwise" vid="19"></i></button>
+                <button class="p-1.5 text-zinc-500 hover:text-zinc-300 transition-colors rounded-md hover:bg-zinc-900" vid="20"><i class="ph ph-export" vid="21"></i></button>
+                <div class="w-px h-4 bg-zinc-800 mx-1" vid="22"></div>
+                <button class="p-1.5 text-zinc-500 hover:text-zinc-300 transition-colors rounded-md hover:bg-zinc-900" vid="23"><i class="ph ph-x" vid="24"></i></button>
+            </div>
+        </header>
+
+        
+        <div class="flex-1 overflow-y-auto p-5 space-y-8 scroll-smooth pb-40" vid="25">
+            
+            
+            <div class="flex gap-4 group" vid="26">
+                <div class="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 overflow-hidden" vid="27">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&amp;backgroundColor=transparent" alt="User" class="w-full h-full object-cover opacity-80" vid="28">
+                </div>
+                <div class="pt-1.5 space-y-1 w-full max-w-2xl" vid="29">
+                    <div class="flex items-center gap-2" vid="30">
+                        <span class="text-xs font-medium text-zinc-300" vid="31">You</span>
+                        <span class="text-[10px] text-zinc-600" vid="32">10:42 AM</span>
+                    </div>
+                    <p class="text-sm text-zinc-300 leading-relaxed" vid="33">
+                        Create a modern dashboard layout for a fintech app. I need a sidebar, a main header with search, and a grid area for financial widgets. Make it dark mode.
+                    </p>
+                </div>
+            </div>
+
+            
+            <div class="flex gap-4 group" vid="34">
+                <div class="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center shrink-0" vid="35">
+                    <i class="ph-fill ph-sparkle text-zinc-400" vid="36"></i>
+                </div>
+                <div class="pt-1.5 space-y-3 w-full max-w-2xl" vid="37">
+                    <div class="flex items-center gap-2" vid="38">
+                        <span class="text-xs font-medium text-zinc-200" vid="39">Variant AI</span>
+                        <span class="text-[10px] text-zinc-600" vid="40">10:43 AM</span>
+                    </div>
+                    <p class="text-sm text-zinc-400 leading-relaxed" vid="41">
+                        I've generated a dark mode fintech dashboard layout with a sidebar, header, and widget grid. Let me know if you want to adjust the proportions or styling.
+                    </p>
+                    
+                    
+                    <div class="rounded-xl border border-zinc-800 bg-zinc-900/30 overflow-hidden group/card relative" vid="42">
+                        
+                        <div class="h-8 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-3" vid="43">
+                            <div class="flex gap-1.5" vid="44">
+                                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700" vid="45"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700" vid="46"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-zinc-700" vid="47"></div>
+                            </div>
+                            <span class="text-[10px] text-zinc-500 font-mono" vid="48">dashboard.tsx</span>
+                            <div class="flex gap-2" vid="49">
+                                <button class="text-zinc-500 hover:text-zinc-300" vid="50"><i class="ph ph-code text-xs" vid="51"></i></button>
+                                <button class="text-zinc-500 hover:text-zinc-300" vid="52"><i class="ph ph-arrows-out-simple text-xs" vid="53"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="h-32 p-2 flex gap-2 w-full" vid="54">
+                            <div class="w-1/4 h-full bg-zinc-800/50 rounded-lg border border-zinc-700/50" vid="55"></div>
+                            <div class="flex-1 h-full flex flex-col gap-2" vid="56">
+                                <div class="h-6 w-full bg-zinc-800/50 rounded-md border border-zinc-700/50" vid="57"></div>
+                                <div class="flex-1 flex gap-2" vid="58">
+                                    <div class="flex-1 h-full bg-zinc-800/30 rounded-md border border-zinc-800 border-dashed" vid="59"></div>
+                                    <div class="flex-1 h-full bg-zinc-800/30 rounded-md border border-zinc-800 border-dashed" vid="60"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="flex gap-4 group" vid="61">
+                <div class="w-8 h-8 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center shrink-0 overflow-hidden" vid="62">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&amp;backgroundColor=transparent" alt="User" class="w-full h-full object-cover opacity-80" vid="63">
+                </div>
+                <div class="pt-1.5 space-y-1 w-full max-w-2xl" vid="64">
+                    <div class="flex items-center gap-2" vid="65">
+                        <span class="text-xs font-medium text-zinc-300" vid="66">You</span>
+                        <span class="text-[10px] text-zinc-600" vid="67">Just now</span>
+                    </div>
+                    <p class="text-sm text-zinc-300 leading-relaxed" vid="68">
+                        That looks good, but let's change the layout to be more brutalist. Remove the rounded corners, use stark borders, and populate the empty widgets with some actual data charts.
+                    </p>
+                </div>
+            </div>
+
+            
+            <div class="flex gap-4 group" vid="69">
+                
+                <div class="w-8 h-8 rounded-full bg-white text-black border border-zinc-700 flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(255,255,255,0.15)] relative" vid="70">
+                    <i class="ph-fill ph-sparkle" vid="71"></i>
+                    
+                    <div class="absolute inset-0 rounded-full border border-white animate-ping opacity-20" vid="72"></div>
+                </div>
+                
+                <div class="pt-1 w-full max-w-3xl space-y-4" vid="73">
+                    <div class="flex items-center gap-2" vid="74">
+                        <span class="text-xs font-medium text-white drop-shadow-sm" vid="75">Variant AI</span>
+                        <span class="flex gap-1" vid="76">
+                            <span class="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style="animation-delay: 0ms" vid="77"></span>
+                            <span class="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style="animation-delay: 150ms" vid="78"></span>
+                            <span class="w-1 h-1 bg-zinc-500 rounded-full animate-bounce" style="animation-delay: 300ms" vid="79"></span>
+                        </span>
+                    </div>
+
+                    
+                    <div class="flex items-start gap-3" vid="80">
+                        <div class="mt-0.5 text-zinc-500" vid="81">
+                            <i class="ph ph-magnifying-glass text-sm" vid="82"></i>
+                        </div>
+                        <div class="flex-1 space-y-1.5" vid="83">
+                            <div class="flex items-center gap-2" vid="84">
+                                <span class="text-xs font-medium text-zinc-400" vid="85">Searching UI libraries...</span>
+                                <i class="ph ph-check-circle text-emerald-500 text-xs" vid="86"></i>
+                            </div>
+                            <p class="text-[11px] text-zinc-600 font-mono" vid="87">Found matching components in brutalist-ds</p>
+                        </div>
+                    </div>
+
+                    
+                    <div class="flex items-start gap-3 bg-zinc-900/40 border border-zinc-800/60 rounded-lg p-3 relative overflow-hidden" vid="88">
+                        
+                        <div class="absolute -left-10 -top-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl animate-pulse-glow" vid="89"></div>
+                        
+                        <div class="mt-0.5 text-blue-400 animate-pulse" vid="90">
+                            <i class="ph ph-brain text-sm" vid="91"></i>
+                        </div>
+                        <div class="flex-1 space-y-2 relative z-10" vid="92">
+                            <div class="flex items-center justify-between cursor-pointer group" vid="93">
+                                <span class="text-xs font-medium text-blue-300" vid="94">Planning structural changes</span>
+                                <i class="ph ph-caret-down text-zinc-500 text-xs transition-transform group-hover:text-zinc-300" vid="95"></i>
+                            </div>
+                            
+                            <div class="pl-2 border-l-2 border-zinc-800/80 space-y-2 mt-2" vid="96">
+                                <div class="flex items-center gap-2 text-[11px] text-zinc-400" vid="97">
+                                    <i class="ph ph-circle-dashed text-[10px] text-zinc-600 animate-spin-slow" vid="98"></i>
+                                    <span vid="99">Converting <code class="bg-zinc-800 px-1 rounded text-zinc-300" vid="100">rounded-xl</code> to <code class="bg-zinc-800 px-1 rounded text-zinc-300" vid="101">rounded-none</code></span>
+                                </div>
+                                <div class="flex items-center gap-2 text-[11px] text-zinc-400" vid="102">
+                                    <i class="ph ph-circle-dashed text-[10px] text-zinc-600 animate-spin-slow" vid="103"></i>
+                                    <span vid="104">Applying stark borders <code class="bg-zinc-800 px-1 rounded text-zinc-300" vid="105">border-2 border-black</code></span>
+                                </div>
+                                <div class="flex items-center gap-2 text-[11px] text-zinc-500" vid="106">
+                                    <i class="ph ph-hourglass text-[10px]" vid="107"></i>
+                                    <span vid="108">Generating chart data mockups...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="space-y-3" vid="109">
+                        <p class="text-sm text-zinc-200 leading-relaxed" vid="110">
+                            Updating the design to a brutalist style. I'm removing the border radii, thickening the lines, and injecting some sample line charts into the dashboard widgets.<span class="inline-block w-1.5 h-3.5 bg-white ml-1 mb-[-2px] animate-blink" vid="111"></span>
+                        </p>
+                        
+                        
+                        <div class="rounded-none border-2 border-zinc-700 bg-zinc-950 p-1 relative overflow-hidden shadow-[4px_4px_0px_rgba(39,39,42,1)]" vid="112">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-[20%] w-full animate-[shimmer_3s_infinite_linear] opacity-50 z-20 pointer-events-none" vid="113"></div>
+                            
+                            <div class="h-8 bg-zinc-900 border-b-2 border-zinc-700 flex items-center justify-between px-3" vid="114">
+                                <span class="text-[10px] text-zinc-400 font-mono tracking-widest uppercase" vid="115">Building Layout...</span>
+                                <div class="text-[10px] text-zinc-500 font-mono shimmer-text" vid="116">78% Complete</div>
+                            </div>
+                            
+                            
+                            <div class="h-40 p-2 flex gap-2 w-full relative z-10" vid="117">
+                                
+                                <div class="w-1/4 h-full border-2 border-zinc-700 bg-zinc-900/20 relative overflow-hidden" vid="118">
+                                    <div class="absolute top-0 left-0 w-full h-full bg-shimmer animate-shimmer opacity-30" vid="119"></div>
+                                    <div class="p-2 space-y-2" vid="120">
+                                        <div class="h-3 w-3/4 bg-zinc-800" vid="121"></div>
+                                        <div class="h-3 w-1/2 bg-zinc-800" vid="122"></div>
+                                        <div class="h-3 w-2/3 bg-zinc-800" vid="123"></div>
+                                    </div>
+                                </div>
+                                
+                                
+                                <div class="flex-1 h-full flex flex-col gap-2 relative" vid="124">
+                                    <div class="h-8 w-full border-2 border-zinc-700 bg-zinc-900/20 relative overflow-hidden flex items-center px-2" vid="125">
+                                         <div class="absolute top-0 left-0 w-full h-full bg-shimmer animate-shimmer opacity-30 delay-75" vid="126"></div>
+                                         <div class="h-3 w-1/3 bg-zinc-800" vid="127"></div>
+                                    </div>
+                                    <div class="flex-1 flex gap-2" vid="128">
+                                        <div class="flex-1 h-full border-2 border-zinc-700 bg-zinc-900/10 relative overflow-hidden flex items-end p-2" vid="129">
+                                            <div class="absolute top-0 left-0 w-full h-full bg-shimmer animate-shimmer opacity-30 delay-150" vid="130"></div>
+                                            
+                                            <svg class="w-full h-1/2 opacity-50" viewBox="0 0 100 50" preserveAspectRatio="none" vid="131">
+                                                <path d="M0 50 L10 40 L20 45 L30 20 L40 30 L50 10 L60 25 L70 5 L80 15 L90 0 L100 10 L100 50 Z" fill="none" stroke="#52525b" stroke-width="2" vector-effect="non-scaling-stroke" vid="132"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 h-full border-2 border-zinc-700 bg-zinc-900/10 relative overflow-hidden flex items-end p-2" vid="133">
+                                            <div class="absolute top-0 left-0 w-full h-full bg-shimmer animate-shimmer opacity-30 delay-200" vid="134"></div>
+                                             
+                                             <svg class="w-full h-3/4 opacity-50" viewBox="0 0 100 50" preserveAspectRatio="none" vid="135">
+                                                <path d="M0 50 L20 30 L40 35 L60 10 L80 20 L100 0 L100 50 Z" fill="none" stroke="#52525b" stroke-width="2" vector-effect="non-scaling-stroke" vid="136"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="h-8" vid="137"></div>
+        </div>
+
+        
+        <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-[#050505] via-[#050505] to-transparent pt-10 pb-5 px-5 z-20" vid="138">
+            
+            <div class="max-w-3xl mx-auto flex flex-col items-end gap-3" vid="139">
+                
+                
+                <div class="flex flex-col gap-2 items-end" vid="140">
+                    <button class="px-3 py-1.5 text-[11px] text-zinc-400 bg-zinc-900/80 backdrop-blur border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-zinc-200 transition-all flex items-center gap-1.5 shadow-sm" vid="141">
+                        <i class="ph ph-magic-wand text-zinc-500" vid="142"></i> Surprise me
+                    </button>
+                    <button class="px-3 py-1.5 text-[11px] text-zinc-400 bg-zinc-900/80 backdrop-blur border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-zinc-200 transition-all flex items-center gap-1.5 shadow-sm" vid="143">
+                        <i class="ph ph-text-align-left text-zinc-500" vid="144"></i> Personal blog
+                    </button>
+                    <button class="px-3 py-1.5 text-[11px] text-zinc-400 bg-zinc-900/80 backdrop-blur border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-zinc-200 transition-all flex items-center gap-1.5 shadow-sm" vid="145">
+                        <i class="ph ph-note text-zinc-500" vid="146"></i> Note taking app
+                    </button>
+                    <button class="px-3 py-1.5 text-[11px] text-zinc-400 bg-zinc-900/80 backdrop-blur border border-zinc-800 rounded-md hover:bg-zinc-800 hover:text-zinc-200 transition-all flex items-center gap-1.5 shadow-sm" vid="147">
+                        <i class="ph ph-app-window text-zinc-500" vid="148"></i> A brutalist landing page
+                    </button>
+                </div>
+
+                
+                <div class="w-full relative bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-xl focus-within:border-zinc-600 focus-within:ring-1 focus-within:ring-zinc-600 transition-all shadow-lg overflow-hidden group" vid="149">
+                    <textarea class="w-full bg-transparent text-sm text-zinc-200 placeholder-zinc-500 p-4 pb-14 outline-none resize-none min-h-[90px]" placeholder="Ask follow-up or describe next iteration..." vid="150"></textarea>
+                    
+                    
+                    <div class="absolute bottom-3 left-3 flex items-center gap-1" vid="151">
+                        <button class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-md transition-colors" title="Attach file" vid="152">
+                            <i class="ph ph-plus text-base" vid="153"></i>
+                        </button>
+                        <button class="w-7 h-7 flex items-center justify-center text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 rounded-md transition-colors" title="Mention element" vid="154">
+                            <i class="ph ph-at text-base" vid="155"></i>
+                        </button>
+                    </div>
+                    
+                    
+                    <div class="absolute bottom-3 right-3 flex items-center gap-3" vid="156">
+                        <span class="text-[10px] text-zinc-600 font-mono uppercase tracking-widest hidden sm:block" vid="157">Return to send</span>
+                        <button class="w-7 h-7 flex items-center justify-center bg-white text-black hover:bg-zinc-200 rounded-md transition-colors opacity-50 group-focus-within:opacity-100" title="Send message" vid="158">
+                            <i class="ph ph-arrow-elbow-down-left text-base" vid="159"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="w-full text-center mt-1" vid="160">
+                     <span class="text-[10px] text-zinc-600" vid="161">AI can make mistakes. Verify important generated code.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body></html>

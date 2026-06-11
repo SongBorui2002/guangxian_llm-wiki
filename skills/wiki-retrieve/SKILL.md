@@ -1,12 +1,14 @@
 ---
 name: wiki-retrieve
-description: "Hybrid retrieval primitive for the Compound Vault. Replaces the v1.6 static hot→index→drill read order with contextual-prefix + BM25 + cosine-rerank, modeled on Anthropic's Sept 2024 Contextual Retrieval research (35-49-67% retrieval-failure reduction). Opt-in via `bash bin/setup-retrieve.sh`; feature-detected by wiki-query and autoresearch. Triggers on: retrieve, hybrid retrieval, BM25, rerank, contextual retrieval, search the chunks, chunk search, vault search, semantic search, what chunks match, find relevant passages."
+description: "Hybrid retrieval primitive for the Compound Vault. Acts as a fallback or supplement to the wiki-first query path using contextual-prefix + BM25 + cosine-rerank, modeled on Anthropic's Sept 2024 Contextual Retrieval research (35-49-67% retrieval-failure reduction). Opt-in via `bash bin/setup-retrieve.sh`; feature-detected by wiki-query and autoresearch. Triggers on: retrieve, hybrid retrieval, BM25, rerank, contextual retrieval, search the chunks, chunk search, vault search, semantic search, what chunks match, find relevant passages."
 allowed-tools: Read Bash
 ---
 
 # wiki-retrieve: Hybrid Retrieval over the Vault
 
-The v1.6 query path was `Read(hot.md) → Read(index.md) → Read(3-5 pages) → synthesize`. It worked, but page-level granularity loses to chunk-level granularity any time the answer lives in a specific passage rather than a whole page. The v1.7 `wiki-retrieve` skill is the chunk-level upgrade — opt-in, feature-gated, and replaces nothing if you don't run the setup.
+This vault's primary query surface is the wiki itself. `wiki-retrieve` is the chunk-level supplement for cases where the wiki is thin, stale, or not yet synthesized deeply enough for the question at hand.
+
+The v1.6 query path was `Read(hot.md) → Read(index.md) → Read(3-5 pages) → synthesize`. It worked, but page-level granularity loses to chunk-level granularity any time the answer lives in a specific passage rather than a whole page. The v1.7 `wiki-retrieve` skill is the chunk-level fallback — opt-in, feature-gated, and inactive unless the caller explicitly invokes it.
 
 **Origin**: This skill is original to claude-obsidian. There is no upstream kepano equivalent. The technique is from [Anthropic's Sept 2024 Contextual Retrieval research](https://www.anthropic.com/news/contextual-retrieval) — we implement it as agent-skill plumbing.
 
@@ -147,7 +149,16 @@ python3 scripts/bm25-index.py stats
 ```bash
 python3 scripts/rerank.py "query" --peek
 ```
-Reports which strategy will run (cosine via ollama / no-op).
+Reports which strategy will run (`ollama` cosine / API cosine / no-op).
+
+### API rerank config
+If you do not want to use `ollama`, copy the local template and fill it by hand:
+
+```bash
+cp .vault-meta/rerank-config.example.json .vault-meta/rerank-config.json
+```
+
+Then edit `.vault-meta/rerank-config.json` locally with your own API endpoint, key, and embedding model. The real config file is gitignored; the example file is safe to commit.
 
 ---
 
@@ -156,9 +167,10 @@ Reports which strategy will run (cosine via ollama / no-op).
 After this skill is installed, `skills/wiki-query/SKILL.md` standard and deep modes will:
 
 1. Read `wiki/hot.md` (always — quick context).
-2. Call `python3 scripts/retrieve.py "<query>" --top 5`.
-3. Read the candidate pages from the result's `absolute_path` field (using the v1.7 transport selector — `obsidian-cli read` or `Read` tool).
-4. Synthesize with chunk-level citation.
+2. Read `wiki/index.md` and relevant wiki pages first.
+3. Only if wiki coverage is insufficient, call `python3 scripts/retrieve.py "<query>" --top 5`.
+4. Read the candidate pages from the result's `absolute_path` field (using the v1.7 transport selector — `obsidian-cli read` or `Read` tool).
+5. Synthesize with chunk-level citation.
 
 Quick mode is unchanged (hot.md only — never invokes retrieval).
 

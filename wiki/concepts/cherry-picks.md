@@ -29,7 +29,7 @@ sources:
 **Source**: ekadetov/llm-wiki, Ar9av/obsidian-wiki
 **What it is**: Pass a URL directly to ingest instead of a file path. Agent fetches the page, cleans it, saves to `.raw/`, then ingests.
 **Current state**: Users must manually copy-paste web content.
-**How to add**: Detect `https://` prefix in ingest skill → WebFetch → save to `.raw/articles/` → proceed with normal ingest.
+**How to add**: Detect `https://` prefix in ingest skill → WebFetch → save to `.raw/documents/` → proceed with normal ingest.
 **Bonus**: Pair with **defuddle** (kepano's web cleaner) for clean token-efficient extraction.
 
 ### 2. Auto-Commit PostToolUse Hook
@@ -104,7 +104,7 @@ sources:
 
 ### 11. obsidian-memory-mcp Integration
 **Source**: YuNaga224/obsidian-memory-mcp
-**What it is**: Connect the MCP server that stores Claude's memories as Markdown entities with `[[wikilinks]]` → they appear in Obsidian graph view automatically.
+**What it is**: Connect the MCP server that stores Claude's memories as Markdown entities with wikilinks → they appear in Obsidian graph view automatically.
 **How to add**: Point MEMORY_DIR to the wiki/entities/ directory — entity memory pages become proper wiki pages.
 
 ### 12. obsidian-bases Skill (from kepano)

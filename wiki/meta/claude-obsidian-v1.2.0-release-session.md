@@ -1,5 +1,6 @@
 ---
-type: session
+
+type: meta
 title: "claude-obsidian v1.2.0 Release Session"
 created: 2026-04-07
 updated: 2026-04-07

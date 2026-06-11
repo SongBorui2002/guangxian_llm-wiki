@@ -29,6 +29,9 @@ Every source you add gets processed into 8–15 cross-referenced wiki pages. Eve
 Put any document into the `.raw/` folder:
 - PDFs, markdown files, transcripts, articles
 - Or paste a URL and ask Claude to fetch it
+- Or point Claude at a local HTML bundle or a local git repository path
+
+If the file or repository is outside `.raw/`, `ingest` should first help copy or clone it into the appropriate `.raw/...` folder automatically.
 
 ### 2. Ingest it
 
@@ -38,7 +41,7 @@ Tell Claude in any Claude Code session:
 ingest [filename]
 ```
 
-Claude reads the source, creates 8–15 wiki pages under `wiki/`, cross-references everything, and updates `wiki/index.md`, `wiki/log.md`, and `wiki/hot.md`.
+Claude uses `ingest` as the unified entry point. It detects whether the source is already Markdown or needs preprocessing first. For PDFs, DOCX files, local HTML bundles, and repositories, it runs the appropriate internal helper automatically, then creates 8–15 wiki pages under `wiki/`, including source, entity, concept, and workflow pages, cross-references everything, and updates `wiki/index.md`, `wiki/log.md`, and `wiki/hot.md`.
 
 ### 3. Ask questions
 
@@ -46,7 +49,7 @@ Claude reads the source, creates 8–15 wiki pages under `wiki/`, cross-referenc
 what do you know about [topic]?
 ```
 
-Claude reads the hot cache, scans the index, drills into relevant pages, and gives you a synthesized answer — citing specific wiki pages, not training data.
+Claude reads the hot cache, scans the index, drills into relevant pages, and gives you a synthesized answer. If the wiki is still thin, it can fall back to retrieval against raw or chunked sources. It cites specific wiki pages, not training data.
 
 ---
 
@@ -62,7 +65,7 @@ Update it manually at any time: `update hot cache`
 
 ## Your First Ingest — Walkthrough
 
-1. Create a file in `.raw/` — copy a transcript, paste an article, or save a PDF
+1. Create or point to a source — copy a transcript, paste an article, save a PDF, point at an HTML help bundle, or point at a repository
 2. Open Claude Code in this vault folder
 3. Type: `ingest [your-filename]`
 4. Watch the wiki grow — Claude will report which pages it created
@@ -94,6 +97,8 @@ After 3–5 ingests, the graph starts to look like a real knowledge network. Cro
 - **[[LLM Wiki Pattern]]** — the pattern this vault is built on
 - **[[Wiki vs RAG]]** — why a wiki beats RAG at human scale
 - **[[dashboard]]** — live Dataview queries (requires Dataview plugin)
+- **[[transport-fallback]]** — transport layer fallback chain for vault mutations
+- **[[methodology-modes]]** — LYT / PARA / Zettelkasten / Generic mode configuration
 
 ---
 

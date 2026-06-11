@@ -28,12 +28,19 @@ Three layers:
 vault/
 ├── .raw/       # Layer 1: immutable source documents
 ├── wiki/       # Layer 2: LLM-generated knowledge base
-└── CLAUDE.md   # Layer 3: schema and instructions (this plugin)
+├── AGENTS.md   # Layer 3a: schema for Codex / agent-skills tools
+└── CLAUDE.md   # Layer 3b: schema for Claude-oriented tools
 ```
 
 Standard wiki structure:
 
 ```
+.raw/
+├── documents/         # normalized docs, HTML bundle markdown, imported text
+├── images/            # screenshots, scans, diagrams, OCR notes
+├── code-data/         # code snippets, configs, structured extracts
+└── repos/             # shallow-cloned repositories as raw source material
+
 wiki/
 ├── index.md            # master catalog of all pages
 ├── log.md              # chronological record of all operations
@@ -44,11 +51,14 @@ wiki/
 │   └── _index.md
 ├── concepts/           # ideas, patterns, frameworks
 │   └── _index.md
+├── workflows/          # procedures, runbooks, step-by-step operations
+│   └── _index.md
 ├── domains/            # top-level topic areas
 │   └── _index.md
 ├── comparisons/        # side-by-side analyses
 ├── questions/          # filed answers to user queries
-└── meta/               # dashboards, lint reports, conventions
+├── meta/               # dashboards, lint reports, conventions
+└── canvases/           # optional visual maps and process canvases
 ```
 
 Dot-prefixed folders (`.raw/`) are hidden in Obsidian's file explorer and graph view. Use this for source documents.
@@ -124,13 +134,13 @@ Steps:
 5. Create `wiki/index.md`, `wiki/log.md`, `wiki/hot.md`, `wiki/overview.md`.
 6. Create `_templates/` files for each note type.
 7. Apply visual customization. Read `references/css-snippets.md`. Create `.obsidian/snippets/vault-colors.css`.
-8. Create the vault CLAUDE.md using the template below.
+8. Create both `AGENTS.md` and `CLAUDE.md` using the template below.
 9. Initialize git. Read `references/git-setup.md`.
 10. Present the structure and ask: "Want to adjust anything before we start?"
 
-### Vault CLAUDE.md Template
+### Vault Schema Template
 
-Create this file in the vault root when scaffolding a new project vault (not this plugin directory):
+Create these files in the vault root when scaffolding a new project vault (not this plugin directory). `AGENTS.md` and `CLAUDE.md` should carry the same operational rules, adapted only for the target agent surface:
 
 ```markdown
 # [WIKI NAME]: LLM Wiki
@@ -149,9 +159,11 @@ Created: YYYY-MM-DD
 - All notes use YAML frontmatter: type, status, created, updated, tags (minimum)
 - Wikilinks use [[Note Name]] format: filenames are unique, no paths needed
 - .raw/ contains source documents: never modify them
+- New source intake prefers `.raw/documents/`, `.raw/images/`, `.raw/code-data/`, `.raw/repos/`
 - wiki/index.md is the master catalog: update on every ingest
 - wiki/log.md is append-only: never edit past entries
 - New log entries go at the TOP of the file
+- Query is Wiki-first; retrieval from raw sources is fallback only
 
 ## Operations
 
@@ -178,6 +190,7 @@ When you need context not already in this project:
 2. If not enough, read wiki/index.md (full catalog)
 3. If you need domain specifics, read wiki/<domain>/_index.md
 4. Only then read individual wiki pages
+5. Use retrieval from raw or chunked sources only if the wiki is still insufficient
 
 Do NOT read the wiki for:
 - General coding questions or language syntax
@@ -199,6 +212,7 @@ Your job as the LLM:
 5. Always update index, sub-indexes, log, and hot cache on changes
 6. Always use frontmatter and wikilinks
 7. Never modify .raw/ sources
+8. Prefer `workflows/` for procedural knowledge and `concepts/` for explanatory knowledge
 
 The human's job: curate sources, ask good questions, think about what it means. Everything else is on you.
 

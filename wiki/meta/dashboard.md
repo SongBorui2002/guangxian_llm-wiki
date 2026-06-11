@@ -20,11 +20,6 @@ Navigation: [[index]] | [[overview]] | [[log]] | [[hot]]
 
 The dashboard uses **Obsidian Bases**. A core Obsidian feature shipped in v1.9.10 (August 2025). No plugin install required.
 
-> [!tip] Embedded Bases view
-> The interactive dashboard lives in [[dashboard.base]]. Open that file directly, or use the embed below.
-
-![[dashboard.base]]
-
 ---
 
 ## Legacy Dataview Dashboard (Optional)

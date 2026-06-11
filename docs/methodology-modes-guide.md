@@ -46,6 +46,7 @@ v1.8.0 closes that gap. After this release, claude-obsidian is **#1 on 5 of 7 ax
 - `wiki/sources/<slug>.md` — ingested source documents
 - `wiki/entities/<Name>.md` — people, orgs, products (capitalization preserved)
 - `wiki/concepts/<Name>.md` — concepts and frameworks
+- `wiki/workflows/<Task Name>.md` — repeatable procedures, runbooks, and troubleshooting flows
 - `wiki/sessions/<date>-<topic>.md` — session notes from `/save`
 
 **When to use:**
@@ -142,7 +143,7 @@ The integration is **automatic** — once you set a mode, `wiki-ingest`, `save`,
 
 | Skill | What it does | How mode affects it |
 |---|---|---|
-| `wiki-ingest` | files new source/entity/concept pages | router determines destination folder per mode |
+| `wiki-ingest` | files new source/entity/concept/workflow pages | router determines destination folder per mode |
 | `save` | files session notes from the current conversation | router determines `wiki/sessions/` (generic), `wiki/notes/` + MOC update (LYT), `wiki/projects/inbox/` (PARA), or `wiki/<ID>-session-...` (Zettel) |
 | `autoresearch` | files synthesis page after a research loop | router determines `wiki/concepts/` (generic), `wiki/notes/` + topic MOC (LYT), `wiki/resources/<topic>/` (PARA), or `wiki/<ID>-...` (Zettel) |
 
@@ -186,7 +187,7 @@ The file schema:
     "lyt": {"moc_folder": "wiki/mocs/", "notes_folder": "wiki/notes/"},
     "para": {"projects_folder": "...", "areas_folder": "...", "resources_folder": "...", "archives_folder": "..."},
     "zettelkasten": {"id_format": "YYYYMMDDHHMMSSffffff", "no_folders": true, "root_folder": "wiki/"},
-    "generic": {"sources_folder": "wiki/sources/", "entities_folder": "wiki/entities/", "concepts_folder": "wiki/concepts/", "sessions_folder": "wiki/sessions/"}
+    "generic": {"sources_folder": "wiki/sources/", "entities_folder": "wiki/entities/", "concepts_folder": "wiki/concepts/", "workflows_folder": "wiki/workflows/", "sessions_folder": "wiki/sessions/"}
   }
 }
 ```
